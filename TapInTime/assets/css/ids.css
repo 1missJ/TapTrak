@@ -1,0 +1,40 @@
+/* Modal Body (center content horizontally and vertically) */
+.modal-body {
+    display: flex;
+    justify-content: center; /* horizontally center */
+    align-items: center;     /* vertically center (if needed) */
+    flex-direction: column;
+    padding: 10px;
+}
+
+/* Small Blue Box Button Style */
+.print-btn {
+    background-color: #007BFF; /* Bootstrap Blue */
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    font-size: 12px;
+    border-radius: 4px;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.2s ease-in-out;
+}
+
+.print-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Close Button Outside Scrollable Area */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 50px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #333;
+}
+
+.close:hover {
+    color: red;
+}
