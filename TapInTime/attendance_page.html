@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attendance - <?php echo $section; ?></title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+        .info-line {
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+    
+        select, input[type="date"] {
+            padding: 8px 10px;
+            font-size: 15px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-left: 10px;
+            width: 200px;
+        }
+    
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+    
+        thead {
+            background-color: #007bff;
+            color: white;
+        }
+    
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+    
+        tbody tr:hover {
+            background-color: #f1f1f1;
+        }
+    
+        .no-data {
+            text-align: center;
+            font-style: italic;
+            color: #999;
+        }
+        
+        /* Style for Present and Absent remarks */
+        .present {
+            color: green;
+            font-weight: bold;
+        }
+        
+        .absent {
+            color: red;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+            <!--Navigation-->
+            <div class="container">
+                <div class="navigation">
+                    <ul>
+                        <li class="brand-logo">
+                            <a href="#">
+                                <div class="logo-container">
+                                    <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                                </div>
+                                <span class="title">TapInTime</span>
+                            </a>
+                        </li>                    
+                        
+                        <li>
+                            <a href="dashboard.php">
+                                <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                                <span class="title">Dashboard</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_verification.php">
+                                <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
+                                <span class="title">Student Verification</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_details.php">
+                                <span class="icon"><ion-icon name="people-circle-outline"></ion-icon> </span>
+                                <span class="title">Student Information</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="id_generation.php">
+                                <span class="icon"><ion-icon name="card-outline"></ion-icon></span>
+                                <span class="title">ID Generation with RFID</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="faculty_registration.html">
+                                <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
+                                <span class="title">Faculty Registration</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="subject_management.html">
+                                <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
+                                <span class="title">Subject Management</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="attendance_monitoring.html">
+                                <span class="icon"><ion-icon name="stats-chart-outline"></ion-icon></span>
+                                <span class="title">Attendance Monitoring</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_promotion.php">
+                                <span class="icon"><ion-icon name="ribbon-outline"></ion-icon></span>
+                                <span class="title">Students Promotion</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="user.php">
+                                <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+                                <span class="title">Users</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="index.php">
+                                <span class="icon"><ion-icon name="log-in-outline"></ion-icon></span>
+                                <span class="title">Sign out</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+    <div class="main-content">
+        <h2>Mabini</h2>
+
+        <!-- Search Bar (unchanged) -->
+
+        <!-- Subject Dropdown -->
+        <div class="info-line">
+            <label for="subjectSelect">Subject:</label>
+            <select id="subjectSelect" onchange="loadAttendance()">
+                <option value="Math">Math</option>
+                <option value="English">English</option>
+            </select>
+        </div>
+
+        <!-- Date Picker -->
+        <div class="info-line">
+            <label for="datePicker">Date:</label>
+            <input type="date" id="datePicker" onchange="loadAttendance()">
+        </div>
+
+        <!-- Attendance List -->
+        <div class="attendance-list" id="attendanceList" style="display: none;">
+        </div>
+    </div>
+
+    <script>
+        const attendanceData = [
+            { name: "Emily Johnson", subject: "Math", date: "2025-04-10", time: "08:10AM", remark: "Present" },
+            { name: "Jane Smith", subject: "Math", date: "2025-04-10", time: "08:05AM", remark: "Absent" },
+            { name: "John Doe", subject: "Math", date: "2025-04-10", time: "08:02AM", remark: "Present" },
+            { name: "Michael Lee", subject: "Math", date: "2025-04-10", time: "08:10AM", remark: "Present" },
+            { name: "Sarah Davis", subject: "Math", date: "2025-04-10", time: "08:10AM", remark: "Present" },
+
+            { name: "Emily Johnson", subject: "English", date: "2025-04-11", time: "08:10AM", remark: "Present" },
+            { name: "Jane Smith", subject: "English", date: "2025-04-11", time: "08:05AM", remark: "Absent" },
+            { name: "John Doe", subject: "English", date: "2025-04-11", time: "08:10AM", remark: "Absent" },
+            { name: "Michael Lee", subject: "English", date: "2025-04-11", time: "08:10AM", remark: "Present" },
+            { name: "Sarah Davis", subject: "English", date: "2025-04-11", time: "08:10AM", remark: "Present" },
+        ];
+
+        function loadAttendance() {
+            const date = document.getElementById("datePicker").value;
+            const subject = document.getElementById("subjectSelect").value;
+
+            if (date && subject) {
+                const filtered = attendanceData.filter(entry => entry.date === date && entry.subject === subject);
+
+                let html = `
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>Remark</th>
+                                    </tr>
+                                </thead>
+                                <tbody>`;
+
+                if (filtered.length > 0) {
+                    filtered.forEach(entry => {
+                        const remarkClass = entry.remark === "Present" ? "present" : "absent"; // Apply the correct class for remark
+                        html += `<tr>
+                            <td>${entry.name}</td>
+                            <td>${entry.date}</td>
+                            <td>${entry.time}</td>
+                            <td class="${remarkClass}">${entry.remark}</td>
+                        </tr>`;
+                    });
+                } else {
+                    html += `<tr><td colspan="4" class="no-data">No attendance data found for this date and subject.</td></tr>`;
+                }
+
+                html += `</tbody></table>`;
+                document.getElementById("attendanceList").innerHTML = html;
+                document.getElementById("attendanceList").style.display = "block";  // Show the attendance list
+            }
+        }
+
+        function searchStudent() {
+            alert("Search feature not yet implemented.");
+        }
+
+        window.onload = function() {
+            document.getElementById("attendanceList").style.display = "none";  // Hide the attendance list initially
+        };
+    </script>
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

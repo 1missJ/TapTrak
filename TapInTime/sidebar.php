@@ -72,7 +72,7 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
                 </li>
 
                 <li>
-                    <a href="student_promotion.html">
+                    <a href="student_promotion.php">
                         <span class="icon"><ion-icon name="ribbon-outline"></ion-icon></span>
                         <span class="title">Students Promotion</span>
                     </a>
@@ -97,7 +97,7 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
 
 
             <li>
-                <a href="logout.php">
+                <a href="index.php">
                     <span class="icon"><ion-icon name="log-in-outline"></ion-icon></span>
                     <span class="title">Sign out</span>
                 </a>

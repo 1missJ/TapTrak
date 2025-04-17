@@ -39,7 +39,7 @@
             </li>
 
             <li>
-                <a href="logout.php">
+                <a href="index.php">
                     <span class="icon"><ion-icon name="log-in-outline"></ion-icon></span>
                     <span class="title">Sign out</span>
                 </a>

@@ -1,7 +1,4 @@
 <?php
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
 // Ipasok ang database connection
 include 'db_connection.php'; 
 
@@ -144,6 +141,10 @@ $result = $conn->query($sql);
                         <input type="text" id="modalSection" readonly>
                     </div>
                     <div class="form-column">
+                        <label>Grade Level:</label>
+                        <input type="text" id="modalGradeLevel" readonly>
+                    </div>
+                    <div class="form-column">
                         <label>School Year:</label>
                         <input type="text" id="modalSchoolYear" readonly>
                     </div>
@@ -254,9 +255,9 @@ function searchStudent() {
     document.getElementById("modalContact").value = student.contact_number || "";
     document.getElementById("modalEmail").value = student.email || "";
     document.getElementById("modalSection").value = student.section || "";
+    document.getElementById("modalGradeLevel").value = student.grade_level || "";
     document.getElementById("modalSchoolYear").value = student.school_year || "";
     document.getElementById("modalStudentType").value = student.student_type || "";
-
     document.getElementById("modalGuardianName").value = student.guardian_name || "";
     document.getElementById("modalGuardianAddress").value = student.guardian_address || "";
     document.getElementById("modalGuardianContact").value = student.guardian_contact || "";

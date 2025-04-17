@@ -16,7 +16,7 @@
 /* Use <img> for backgrounds to ensure printing */
 .background-img {
     width: 85%;
-    height: 85%;
+    height: 84%;
     position: absolute;
     top: 0;
     left: 0;
@@ -32,12 +32,13 @@
     left: 43%;
     transform: translateX(-50%);
     object-fit: cover;
+    border: none; /* Removed black border */
 }
 
 .student-name {
     position: absolute;
-    top: 235px;
-    left: 42%;
+    top: 230px;
+    left: 43%;
     transform: translateX(-50%);
     color: rgb(4, 76, 154);
     font-weight: bold;
@@ -48,14 +49,13 @@
     line-height: 1.2;
 }
 
-
 .student-lrn {
     font-size: 20px;
     font-family: 'Roboto', sans-serif;
     color: black;
     font-weight: bold;
     position: absolute;
-    top: 285px;
+    top: 283px;
     left: 43%;
     transform: translateX(-50%);
     white-space: nowrap;
@@ -64,7 +64,7 @@
 /* Back ID */
 .guardian-info {
     position: absolute;
-    bottom: 140px;
+    bottom: 160px;
     left: 2%;
     right: 0%;
     display: flex;
@@ -74,8 +74,8 @@
 
 .school-year {
     position: absolute;
-    top: 69px; /* Fine-tune position to fit in blank space */
-    left: 43%; /* Adjust left positioning to align properly */
+    top: 66px; /* Fine-tune position to fit in blank space */
+    left: 43.5%; /* Adjust left positioning to align properly */
     transform: translateX(-50%);
     font-size: 12.5px; /* Reduce font size for better fit */
     font-family: 'Arial Unicode MS', sans-serif;
@@ -93,7 +93,7 @@
     line-height: 18px; /* Adjust line spacing */
     white-space: normal; /* Allow wrapping if needed */
     text-align: center;
-    max-width: 85%; /* Prevents overflow */
+    max-width: 90%; /* Prevents overflow */
     margin: 0 auto; /* Ensures text stays centered */
 }
 
