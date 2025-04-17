@@ -32,9 +32,9 @@
             </li>
 
             <li>
-                <a href="user.php">
-                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="title">Users</span>
+                <a href="counselor_settings.php">
+                    <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+                    <span class="title">Account Settings</span>
                 </a>
             </li>
 

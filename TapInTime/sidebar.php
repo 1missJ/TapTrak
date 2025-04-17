@@ -79,13 +79,22 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
                 </li>
             <?php endif; ?>
 
-            <!-- All users (counselors, admins, etc.) can access user.php -->
+            <?php if ($userRole === 'superadmin'): ?>
             <li>
-                <a href="user.php">
-                    <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                    <span class="title">Users</span>
-                </a>
+            <a href="user.php">
+            <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+            <span class="title">Users</span>
+            </a>
             </li>
+            <?php elseif ($userRole === 'counselor'): ?>
+            <li>
+            <a href="counselor_settings.php">
+            <span class="icon"><ion-icon name="settings-outline"></ion-icon></span>
+            <span class="title">Account Settings</span>
+            </a>
+            </li>
+            <?php endif; ?>
+
 
             <li>
                 <a href="logout.php">

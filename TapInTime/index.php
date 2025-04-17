@@ -49,7 +49,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
       body {
-    background: url('assets/imgs/dahs_pic.jpg') no-repeat center center fixed;
+    background: url('assets/imgs/dahs2.jpg') no-repeat center center fixed;
     background-size: cover;
 }
 
