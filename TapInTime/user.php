@@ -39,6 +39,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['change_password'])) {
     $stmt->close();
 }
 
+// Fetch all users
+$user_list = [];
+$result = $conn->query("SELECT username, role FROM users ORDER BY id DESC");
+
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $user_list[] = $row;
+    }
+}
 
 
 $conn->close();
@@ -142,8 +151,35 @@ $conn->close();
                     <button type="submit" name="change_password" class="btn-warning">Change Password</button>
                 </form>
             </div>
+            <div class="form-card">
+    <h2>Existing Users</h2>
+    <table style="width:100%; border-collapse: collapse;">
+        <thead>
+            <tr style="background-color: #f0f0f0;">
+                <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Username</th>
+                <th style="text-align: left; padding: 10px; border-bottom: 1px solid #ccc;">Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            <?php if (!empty($user_list)): ?>
+                <?php foreach ($user_list as $user): ?>
+                    <tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><?= htmlspecialchars($user['username']) ?></td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;"><?= ucfirst(htmlspecialchars($user['role'])) ?></td>
+                    </tr>
+                <?php endforeach; ?>
+            <?php else: ?>
+                <tr>
+                    <td colspan="2" style="padding: 10px;">No users found.</td>
+                </tr>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
         </div>
     </div>
+    
 
     <!-- Scripts -->
     <script src="assets/js/main.js"></script>      
