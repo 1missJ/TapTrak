@@ -51,14 +51,14 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
 
             <?php if ($userRole !== 'counselor'): ?>
                 <li>
-                    <a href="faculty_registration.html">
+                    <a href="faculty_registration.php">
                         <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
                         <span class="title">Faculty Registration</span>
                     </a>
                 </li>
 
                 <li>
-                    <a href="subject_management.html">
+                    <a href="subject_management.php">
                         <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
                         <span class="title">Subject Management</span>
                     </a>

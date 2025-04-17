@@ -14,7 +14,6 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Student Promotion</h2>
 
         <!-- Search Bar -->
         <div class="search-container">

@@ -1,108 +1,200 @@
+<?php
+include('db_connection.php');
+
+// Count subjects
+$subject_count = $conn->query("SELECT COUNT(*) as total FROM subjects")->fetch_assoc()['total'];
+
+// Count teachers
+$teacher_count = $conn->query("SELECT COUNT(*) as total FROM faculty")->fetch_assoc()['total'];
+
+// Count students
+$student_count = $conn->query("SELECT COUNT(*) as total FROM students")->fetch_assoc()['total'];
+
+// Count assigned subjects
+$assigned_count = $conn->query("SELECT COUNT(*) as total FROM assigned_subjects")->fetch_assoc()['total'];
+
+// Fetch ALL recent activity
+$recent_query = $conn->query("
+    SELECT f.name as teacher, s.subject_name, a.created_at
+    FROM assigned_subjects a 
+    JOIN faculty f ON a.teacher_id = f.id 
+    JOIN subjects s ON a.subject_id = s.id 
+    ORDER BY a.created_at DESC
+");
+?>
+
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>TapInTime</title>
+<head>
+    <meta charset="UTF-8">
+    <title>TapInTime Dashboard</title>
+    <link rel="stylesheet" href="assets/css/style.css">
 
-        <!--Styles-->
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
 
-    <body>
-        <!--Navigation-->
-        <div class="container">
-            <div class="navigation">
-                <ul>
-                    <li class="brand-logo">
-                        <a href="#">
-                            <div class="logo-container">
-                                <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
-                            </div>
-                            <span class="title">TapInTime</span>
-                        </a>
-                    </li>                    
-                    
-                    <li>
-                        <a href="dashboard.php">
-                            <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
-                            <span class="title">Dashboard</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="student_verification.php">
-                            <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
-                            <span class="title">Student Verification</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="student_details.php">
-                            <span class="icon"><ion-icon name="people-circle-outline"></ion-icon> </span>
-                            <span class="title">Student Information</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="id_generation.php">
-                            <span class="icon"><ion-icon name="card-outline"></ion-icon></span>
-                            <span class="title">ID Generation with RFID</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="faculty_registration.html">
-                            <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
-                            <span class="title">Faculty Registration</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="subject_management.html">
-                            <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
-                            <span class="title">Subject Management</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="attendance_monitoring.html">
-                            <span class="icon"><ion-icon name="stats-chart-outline"></ion-icon></span>
-                            <span class="title">Attendance Monitoring</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="student_promotion.php">
-                            <span class="icon"><ion-icon name="ribbon-outline"></ion-icon></span>
-                            <span class="title">Students Promotion</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="user.php">
-                            <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
-                            <span class="title">Users</span>
-                        </a>
-                    </li>
-        
-                    <li>
-                        <a href="index.php">
-                            <span class="icon"><ion-icon name="log-in-outline"></ion-icon></span>
-                            <span class="title">Sign out</span>
-                        </a>
-                    </li>
-                </ul>
+    <style>
+        .dashboard-container {
+            margin-left: 320px;
+            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #fdfdfd;
+            align-items:center;
+        }
+
+        .dashboard-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            transition: 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+        }
+
+        .card ion-icon {
+            font-size: 32px;
+        }
+
+        .card h3 {
+            margin: 0;
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .card p {
+            margin: 2px 0 0;
+            font-size: 22px;
+            font-weight: bold;
+            color: #2a2a2a;
+        }
+
+        /* Pastel backgrounds */
+        .subjects-card {
+            background-color: #fde2e4;
+            color: #6a1b1b;
+        }
+
+        .teachers-card {
+            background-color: #d8e2dc;
+            color: #1b3a4b;
+        }
+
+        .students-card {
+            background-color: #e2f0cb;
+            color: #2e7d32;
+        }
+
+        .assigned-card {
+            background-color: #cde7f0;
+            color: #1e88e5;
+        }
+
+        .recent-activity {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.06);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .recent-activity h2 {
+            margin-bottom: 15px;
+            font-size: 20px;
+            color: #222;
+        }
+
+        .recent-activity ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .recent-activity li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 16px;
+        }
+
+        .recent-activity li:last-child {
+            border-bottom: none;
+        }
+        h1 {
+        text-align: center;
+         color:rgb(128, 189, 246); /* pastel blue */
+            margin-bottom: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+             font-weight: 600;
+}
+
+    </style>
+</head>
+<body>
+<?php include('sidebar.php'); ?>
+
+<div class="dashboard-container">
+    <h1>Welcome to TapInTime Dashboard 👋</h1>
+
+    <div class="dashboard-cards">
+        <div class="card subjects-card">
+            <ion-icon name="book-outline"></ion-icon>
+            <div>
+                <h3>Total Subjects</h3>
+                <p><?= $subject_count ?></p>
             </div>
         </div>
-        
-        <!--Scripts-->
-        <script src="assets/js/main.js"></script>      
+        <div class="card teachers-card">
+            <ion-icon name="people-outline"></ion-icon>
+            <div>
+                <h3>Total Teachers</h3>
+                <p><?= $teacher_count ?></p>
+            </div>
+        </div>
+        <div class="card students-card">
+            <ion-icon name="school-outline"></ion-icon>
+            <div>
+                <h3>Total Students</h3>
+                <p><?= $student_count ?></p>
+            </div>
+        </div>
+        <div class="card assigned-card">
+            <ion-icon name="clipboard-outline"></ion-icon>
+            <div>
+                <h3>Assigned Subjects</h3>
+                <p><?= $assigned_count ?></p>
+            </div>
+        </div>
+    </div>
 
-        <!--ionicons-->
-        <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
-        <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+    <div class="recent-activity">
+        <h2>📌 Recent Activity</h2>
+        <ul>
+            <?php if ($recent_query->num_rows > 0): ?>
+                <?php while ($activity = $recent_query->fetch_assoc()): ?>
+                    <li>👨‍🏫 <?= htmlspecialchars($activity['teacher']) ?> assigned to <strong><?= htmlspecialchars($activity['subject_name']) ?></strong> on <em><?= date('F j, Y - g:i A', strtotime($activity['created_at'])) ?></em></li>
+                <?php endwhile; ?>
+            <?php else: ?>
+                <li>No recent activity available.</li>
+            <?php endif; ?>
+        </ul>
+    </div>
+</div>
 
-    </body>
+<!-- Optional JS -->
+<script src="assets/js/main.js"></script>
+</body>
 </html>
