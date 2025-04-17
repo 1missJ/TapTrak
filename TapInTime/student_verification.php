@@ -1,4 +1,7 @@
 <?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
 // Ipasok ang database connection
 include 'db_connection.php'; 
 

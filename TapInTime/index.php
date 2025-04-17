@@ -9,7 +9,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $password = trim($_POST['password']);
 
     // Check if the user exists in the database
-    $stmt = $conn->prepare("SELECT id, username, password FROM users WHERE username = ?");
+   $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
     $stmt->bind_param("s", $username);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -18,11 +18,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $user = $result->fetch_assoc();
 
         // Direct comparison since passwords are stored as plain text
-        if ($password === $user['password']) {  
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            header("Location: dashboard.php"); // Redirect to dashboard
-            exit();
+        if (password_verify($password, $user['password'])) {
+         $_SESSION['user_id'] = $user['id'];
+         $_SESSION['username'] = $user['username'];
+         $_SESSION['user_role'] = $user['role']; // 🔥 add this!
+         if ($user['role'] === 'counselor') {
+        header("Location: counselor_dashboard.php");
+        } else {
+        header("Location: dashboard.php"); // For admin, etc.
+        }
+         exit();
         } else {
             $error = "Invalid username or password!";
         }
@@ -73,7 +78,7 @@ body::before {
 <body>
     <div class="container">
         <div class="login-container text-center">
-            <h3>Admin Login</h3>
+            <h3>Login</h3>
             <?php if (!empty($error)) echo "<div class='alert alert-danger'>$error</div>"; ?>
             <form method="POST" action="">
                 <div class="mb-3">
@@ -85,7 +90,7 @@ body::before {
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
             <hr>
-            <p>Are you a student? <a href="register.php">Register here</a></p>
+            <p>Application for New Student <a href="register.php">Register here</a></p>
         </div>
     </div>
 </body>

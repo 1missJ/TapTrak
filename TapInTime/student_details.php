@@ -1,4 +1,20 @@
 <?php
+session_start();
+
+if (!isset($_SESSION['user_role'])) {
+    header("Location: login.php");
+    exit;
+}
+
+$role = $_SESSION['user_role'];
+$allowed_pages_for_counselor = ['student_verification.php', 'student_details.php', 'id_generation.php'];
+$current_page = basename($_SERVER['PHP_SELF']);
+
+if ($role === 'counselor' && !in_array($current_page, $allowed_pages_for_counselor)) {
+    echo "Access denied.";
+    exit;
+}
+
 // Include database connection
 include('db_connection.php');
 
