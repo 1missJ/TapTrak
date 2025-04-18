@@ -1,3 +1,41 @@
+<?php
+include 'db_connection.php';
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_students'], $_POST['current_grade_level'])) {
+    $selected = $_POST['selected_students'];
+    $current_grade = $_POST['current_grade_level'];
+
+    // Logic to determine the next grade level
+    $grade_map = [
+        'Grade 7' => 'Grade 8',
+        'Grade 8' => 'Grade 9',
+        'Grade 9' => 'Grade 10',
+        'Grade 10' => 'Grade 11',
+    ];
+
+    $next_grade = $grade_map[$current_grade] ?? null;
+
+    if (!$next_grade) {
+        echo "Invalid grade level mapping.";
+        exit;
+    }
+
+    $stmt = $conn->prepare("UPDATE students SET grade_level = ?, promotion_status = 'promoted' WHERE lrn = ?");
+
+    foreach ($selected as $lrn) {
+        $stmt->bind_param("ss", $next_grade, $lrn);
+        $stmt->execute();
+    }
+
+    $stmt->close();
+    $conn->close();
+
+    echo "success";
+    exit; // Make sure script stops here and does NOT render HTML
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -79,29 +117,57 @@ $stmt->close();
 </div>
 
 
+<script>
+    function searchStudent() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("studentTableBody");
+        var tr = table.getElementsByTagName("tr");
 
-    <!-- Scripts -->
-    <script>
-        function searchStudent() {
-            var input = document.getElementById("searchInput");
-            var filter = input.value.toUpperCase();
-            var table = document.getElementById("studentTableBody");
-            var tr = table.getElementsByTagName("tr");
-
-            for (var i = 0; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    var txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-                }
+        for (var i = 0; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
             }
         }
+    }
 
-        function promoteStudents() {
-            var checkboxes = document.querySelectorAll(".promote-checkbox:checked");
-            alert(checkboxes.length + " student(s) promoted successfully.");
+    function promoteStudents() {
+    const checkboxes = document.querySelectorAll(".promote-checkbox:checked");
+    const selected = Array.from(checkboxes).map(cb => cb.value);
+
+    if (selected.length === 0) {
+        alert("Please select students to promote.");
+        return;
+    }
+
+    const gradeLevel = "<?php echo $grade_level; ?>"; // dynamically echoed from PHP
+
+    const formData = new FormData();
+    selected.forEach(lrn => formData.append("selected_students[]", lrn));
+    formData.append("current_grade_level", gradeLevel);
+
+    fetch("promote_students.php", {
+        method: "POST",
+        body: formData
+    })
+    .then(response => response.text())
+    .then(result => {
+        if (result.trim() === "success") {
+            alert("Selected students promoted successfully!");
+            location.reload();
+        } else {
+            alert("Promotion failed:\n" + result);
         }
-    </script>
+    })
+    .catch(error => {
+        console.error("Error:", error);
+        alert("An error occurred while promoting students.");
+    });
+}
+
+</script>
 
     <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

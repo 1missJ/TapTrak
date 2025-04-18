@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Attendance Report</title>
+    <link rel="stylesheet" href="assets/css/style.css">
+    <style>
+/* Basic Reset */
+body, h3, table {
+    margin: 0;
+    padding: 0;
+}
+
+/* Content Area */
+.content {
+    margin-left: 300px; /* Offset to the right by the width of the sidebar */
+    padding: 20px;
+    flex-grow: 1;
+    max-width: calc(100% - 80px); /* Prevents content from exceeding sidebar width */
+}
+
+h3 {
+    background-color: #007bff;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+/* Table Styling */
+table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            margin-top: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+thead {
+    background-color: #007bff;
+    color: white;
+}
+
+th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+tbody tr:hover {
+    background-color: #f1f1f1;
+}
+    </style>
+</head>
+
+<body>
+            <!--Navigation-->
+            <div class="container">
+                <div class="navigation">
+                    <ul>
+                        <li class="brand-logo">
+                            <a href="#">
+                                <div class="logo-container">
+                                    <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                                </div>
+                                <span class="title">TapInTime</span>
+                            </a>
+                        </li>                    
+                        
+                        <li>
+                            <a href="dashboard.php">
+                                <span class="icon"><ion-icon name="home-outline"></ion-icon></span>
+                                <span class="title">Dashboard</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_verification.php">
+                                <span class="icon"><ion-icon name="checkmark-done-circle-outline"></ion-icon></span>
+                                <span class="title">Student Verification</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_details.php">
+                                <span class="icon"><ion-icon name="people-circle-outline"></ion-icon> </span>
+                                <span class="title">Student Information</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="id_generation.php">
+                                <span class="icon"><ion-icon name="card-outline"></ion-icon></span>
+                                <span class="title">ID Generation with RFID</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="faculty_registration.php">
+                                <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
+                                <span class="title">Faculty Registration</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="subject_management.php">
+                                <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
+                                <span class="title">Subject Management</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="attendance_monitoring.html">
+                                <span class="icon"><ion-icon name="stats-chart-outline"></ion-icon></span>
+                                <span class="title">Attendance Monitoring</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="student_promotion.php">
+                                <span class="icon"><ion-icon name="ribbon-outline"></ion-icon></span>
+                                <span class="title">Students Promotion</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="user.php">
+                                <span class="icon"><ion-icon name="person-outline"></ion-icon></span>
+                                <span class="title">Users</span>
+                            </a>
+                        </li>
+            
+                        <li>
+                            <a href="index.php">
+                                <span class="icon"><ion-icon name="log-in-outline"></ion-icon></span>
+                                <span class="title">Sign out</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+        <!-- Main Content -->
+        <div class="content">
+            <h3>Weekly Attendance Report</h3>
+            <div class="attendance-list">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Week</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Week 1 (Jan 1 - Jan 5)</td>
+                            <td>40</td>
+                            <td>4</td>
+                        </tr>
+                        <tr>
+                            <td>Week 2 (Jan 8 - Jan 12)</td>
+                            <td>38</td>
+                            <td>6</td>
+                        </tr>
+                        <tr>
+                            <td>Week 3 (Jan 15 - Jan 19)</td>
+                            <td>42</td>
+                            <td>2</td>
+                        </tr>
+                        <tr>
+                            <td>Week 4 (Jan 22 - Jan 26)</td>
+                            <td>39</td>
+                            <td>5</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ionicons -->
+    <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
+    <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>
+</body>
+</html>

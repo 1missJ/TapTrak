@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Student Promotion</title>
-    <link rel="stylesheet" href="assets/css/style.css">
+    <link rel="stylesheet" href="assets/css/style.css">  
 </head>
 
 <body>
@@ -28,6 +28,7 @@
             <div class="year-box" onclick="showStudents('Grade 9')">Grade 9</div>
             <div class="year-box" onclick="showStudents('Grade 10')">Grade 10</div>
         </div>
+
 
         <!-- Student Table -->
         <table class="student-table" id="studentTable" style="display:none;">

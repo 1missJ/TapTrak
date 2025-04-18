@@ -8,15 +8,22 @@
         .info-line {
             margin-bottom: 15px;
             font-size: 16px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            text-align: center;
+            font-weight: bold;
         }
-    
+
+        /* Center the content inside the select and input fields */
         select, input[type="date"] {
             padding: 8px 10px;
             font-size: 15px;
             border-radius: 5px;
             border: 1px solid #ccc;
-            margin-left: 10px;
             width: 200px;
+            text-align: center;
+            font-weight: bold;
         }
     
         table {
@@ -58,6 +65,14 @@
         .absent {
             color: red;
             font-weight: bold;
+        }
+
+        h2 {
+            text-align: center;
+        }
+
+        .attendance-list {
+            margin-top: 20px;
         }
     </style>
 </head>
@@ -104,14 +119,14 @@
                         </li>
             
                         <li>
-                            <a href="faculty_registration.html">
+                            <a href="faculty_registration.php">
                                 <span class="icon"><ion-icon name="school-outline"></ion-icon></span>
                                 <span class="title">Faculty Registration</span>
                             </a>
                         </li>
             
                         <li>
-                            <a href="subject_management.html">
+                            <a href="subject_management.php">
                                 <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
                                 <span class="title">Subject Management</span>
                             </a>
@@ -151,21 +166,19 @@
     <div class="main-content">
         <h2>Mabini</h2>
 
-        <!-- Search Bar (unchanged) -->
-
-        <!-- Subject Dropdown -->
+        <!-- Subject and Date Dropdowns (centered) -->
         <div class="info-line">
-            <label for="subjectSelect">Subject:</label>
-            <select id="subjectSelect" onchange="loadAttendance()">
-                <option value="Math">Math</option>
-                <option value="English">English</option>
-            </select>
-        </div>
-
-        <!-- Date Picker -->
-        <div class="info-line">
-            <label for="datePicker">Date:</label>
-            <input type="date" id="datePicker" onchange="loadAttendance()">
+            <div>
+                <label for="subjectSelect">Subject:</label>
+                <select id="subjectSelect" onchange="loadAttendance()">
+                    <option value="Math">Math</option>
+                    <option value="English">English</option>
+                </select>
+            </div>
+            <div>
+                <label for="datePicker">Date:</label>
+                <input type="date" id="datePicker" onchange="loadAttendance()">
+            </div>
         </div>
 
         <!-- Attendance List -->
@@ -223,17 +236,9 @@
 
                 html += `</tbody></table>`;
                 document.getElementById("attendanceList").innerHTML = html;
-                document.getElementById("attendanceList").style.display = "block";  // Show the attendance list
+                document.getElementById("attendanceList").style.display = "block";
             }
         }
-
-        function searchStudent() {
-            alert("Search feature not yet implemented.");
-        }
-
-        window.onload = function() {
-            document.getElementById("attendanceList").style.display = "none";  // Hide the attendance list initially
-        };
     </script>
 
     <!-- Ionicons -->
