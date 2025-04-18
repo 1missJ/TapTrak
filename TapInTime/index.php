@@ -1,41 +1,73 @@
 <?php
-session_start(); // Start session
-include 'db_connection.php'; // Database connection
+session_start();
+include 'db_connection.php';
 
 $error = "";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = trim($_POST['username']);
-    $password = trim($_POST['password']);
+    $username = trim($_POST['username']); // LRN or system username
+    $password = trim($_POST['password']); // MMDDYYYY or system password
 
-    // Check if the user exists in the database
-   $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
-    $stmt->bind_param("s", $username);
-    $stmt->execute();
-    $result = $stmt->get_result();
+    if (preg_match('/^\d{12}$/', $username)) {
+        // 🌟 Student login
+        $stmt = $conn->prepare("SELECT id, lrn, date_of_birth, first_name FROM students WHERE lrn = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-    if ($result->num_rows == 1) {
-        $user = $result->fetch_assoc();
+        if ($result->num_rows === 1) {
+            $student = $result->fetch_assoc();
+            $dob_db = $student['date_of_birth'];
 
-        // Direct comparison since passwords are stored as plain text
-        if (password_verify($password, $user['password'])) {
-         $_SESSION['user_id'] = $user['id'];
-         $_SESSION['username'] = $user['username'];
-         $_SESSION['user_role'] = $user['role']; // 🔥 add this!
-         if ($user['role'] === 'counselor') {
-        header("Location: counselor_dashboard.php");
+            // Convert YYYY-MM-DD to MMDDYYYY
+            $dob_formatted = date("mdY", strtotime($dob_db));
+
+            if ($password === $dob_formatted) {
+                $_SESSION['student_id'] = $student['id'];
+                $_SESSION['lrn'] = $student['lrn'];
+                $_SESSION['student_name'] = $student['first_name'];
+
+                header("Location: student_portal.php");
+                exit();
+            } else {
+                $error = "Invalid LRN or date of birth!";
+            }
         } else {
-        header("Location: dashboard.php"); // For admin, etc.
+            $error = "Invalid LRN or date of birth!";
         }
-         exit();
+
+        $stmt->close();
+    } else {
+        // 🌟 System user login (admin, counselor, etc.)
+        $stmt = $conn->prepare("SELECT id, username, password, role FROM users WHERE username = ?");
+        $stmt->bind_param("s", $username);
+        $stmt->execute();
+        $result = $stmt->get_result();
+
+        if ($result->num_rows == 1) {
+            $user = $result->fetch_assoc();
+
+            if (password_verify($password, $user['password'])) {
+                $_SESSION['user_id'] = $user['id'];
+                $_SESSION['username'] = $user['username'];
+                $_SESSION['user_role'] = $user['role'];
+
+                if ($user['role'] === 'counselor') {
+                    header("Location: counselor_dashboard.php");
+                } else {
+                    header("Location: dashboard.php"); // admin, superadmin, etc.
+                }
+                exit();
+            } else {
+                $error = "Invalid username or password!";
+            }
         } else {
             $error = "Invalid username or password!";
         }
-    } else {
-        $error = "Invalid username or password!";
+
+        $stmt->close();
     }
 
-    $stmt->close();
     $conn->close();
 }
 ?>

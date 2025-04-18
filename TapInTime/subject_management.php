@@ -75,8 +75,15 @@ include('db_connection.php');
             </form>
         </div>
 
-        <h2>List of Subjects</h2>
-        <table class="subject-table">
+       <div style="display: flex; justify-content: flex-end; align-items: center; margin-bottom: 10px;">
+    <div>
+        <a href="assign_subjects_to_grade.php?type=Regular" class="subject-btn" style="background-color: #2196F3;">Assign to Regular</a>
+        <a href="assign_subjects_to_grade.php?type=STI" class="subject-btn" style="background-color: #9C27B0;">Assign to STI</a>
+    </div>
+</div>
+
+
+        <table class="subject-table" style="margin-top:50px";>
             <thead>
                 <tr>
                     <th>Subject Name</th>
