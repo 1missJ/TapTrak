@@ -14,10 +14,11 @@
     
     <!-- Main Content -->
     <div class="main-content">
+    <h2>Student Promotion</h2>
 
         <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search student...">
+            <input type="text" id="searchInput" placeholder="Search by section...">
             <button onclick="searchStudent()">Search</button>
         </div>
 
@@ -83,21 +84,40 @@ foreach ($grades as $grade_level) {
 
     <!-- JavaScript -->
     <script>
-        function searchStudent() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("studentTableBody");
-            tr = table.getElementsByTagName("tr");
+    function searchStudent() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("studentTableBody");
+        var tr = table.getElementsByTagName("tr");
+        var foundMatch = false;
 
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        for (var i = 0; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[0]; // section column
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                    tr[i].style.display = "";
+                    foundMatch = true;
+                } else {
+                    tr[i].style.display = "none";
                 }
             }
         }
+
+        // Show table if at least one match is found
+        if (foundMatch) {
+            document.querySelector(".year-levels").style.display = "none";
+            document.getElementById("studentTable").style.display = "table";
+        }
+    }
+
+    // Trigger search on Enter key
+    document.getElementById("searchInput").addEventListener("keydown", function(event) {
+        if (event.key === "Enter") {
+            event.preventDefault(); // Prevent form submission
+            searchStudent();
+        }
+    });
 
         // Show students for a selected year level
         function showStudents(yearLevel) {

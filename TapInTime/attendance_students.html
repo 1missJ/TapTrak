@@ -96,103 +96,115 @@
     
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Attendance Record</h2>
+        <h2>Student List</h2>
 
         <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by section...">
-            <button onclick="searchStudent()">Search</button>
+            <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="handleKeyPress(event)">
+            <button onclick="searchStudent()">Search</button>            
         </div>
 
-        <!-- Year Level List -->
-        <div class="year-levels">
-            <div class="year-box" onclick="showStudents('Grade 7')">Grade 7</div>
-            <div class="year-box" onclick="showStudents('Grade 8')">Grade 8</div>
-            <div class="year-box" onclick="showStudents('Grade 9')">Grade 9</div>
-            <div class="year-box" onclick="showStudents('Grade 10')">Grade 10</div>
-        </div>
 
         <!-- Student Table -->
-        <table class="student-table" id="studentTable" style="display:none;">
+        <table class="student-table" id="studentTable">
             <thead>
                 <tr>
-                    <th>Section</th>
-                    <th>No. of Students</th>
+                    <th>LRN</th>
+                    <th>Name</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
                 <!-- Sample data for Grade 7 -->
                 <tr>
-                    <td>Mabini</td>
-                    <td>44</td>
+                    <td>123456789120</td>
+                    <td>Emily Johnson</td>
                     <td>
-                        <button class="views-btn" onclick="location.href='attendance_page.html'"><ion-icon name='eye-outline'></ion-icon></button>
-                        <button class="student-btn" onclick="location.href='attendance_students.html'"><ion-icon name="person-outline"></button>
-                        <button class="report-btn" onclick="location.href='attendance_report.html'"><ion-icon name="newspaper-outline"></ion-icon></button>
+                        <button class="view-btn" onclick="viewAttendance('123456789120')">
+                            <ion-icon name='eye-outline'></ion-icon>
+                        </button>                        
                     </td>
                 </tr>
                 <tr>
-                    <td>Mangga</td>
-                    <td>36</td>
+                    <td>453467890986</td>
+                    <td>Jane Smith</td>
                     <td>
-                        <button class="views-btn" onclick="location.href='attendance_page.html'"><ion-icon name='eye-outline'></ion-icon></button>
-                        <button class="student-btn" onclick="location.href='attendance_students.html'"><ion-icon name="person-outline"></button>
-                        <button class="report-btn" onclick="location.href='attendance_report.html'"><ion-icon name="newspaper-outline"></ion-icon></button>
+                        <button class="view-btn" onclick="viewAttendance('453467890986')">
+                            <ion-icon name='eye-outline'></ion-icon>
+                        </button>  
                     </td>
-                </tr>                
+                </tr>  
+                <tr>
+                    <td>78467890986</td>
+                    <td>John Doe</td>
+                    <td>
+                        <button class="view-btn" onclick="viewAttendance('78467890986')">
+                            <ion-icon name='eye-outline'></ion-icon>
+                        </button>  
+                    </td>
+                </tr>  
+                <tr>
+                    <td>775894020011</td>
+                    <td>Michael Lee</td>
+                    <td>
+                        <button class="view-btn" onclick="viewAttendance('775894020011')">
+                            <ion-icon name='eye-outline'></ion-icon>
+                        </button>  
+                    </td>
+                </tr>  
+                <tr>
+                    <td>567829304568</td>
+                    <td>Sarah Davis</td>
+                    <td>
+                        <button class="view-btn" onclick="viewAttendance('567829304568')">
+                            <ion-icon name='eye-outline'></ion-icon>
+                        </button>  
+                    </td>
+                </tr>               
             </tbody>
         </table>
 
-        <script>
-            // Search function
-            function searchStudent() {
-                var input = document.getElementById("searchInput");
-                var filter = input.value.toUpperCase();
-                var table = document.getElementById("studentTableBody");
-                var tr = table.getElementsByTagName("tr");
-                var foundMatch = false;
-        
-                for (var i = 0; i < tr.length; i++) {
-                    var td = tr[i].getElementsByTagName("td")[0]; // section column
-                    if (td) {
-                        var txtValue = td.textContent || td.innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                            foundMatch = true;
-                        } else {
-                            tr[i].style.display = "none";
-                        }
-                    }
-                }
-        
-                // Show table if at least one match is found
-                if (foundMatch) {
-                    document.querySelector(".year-levels").style.display = "none";
-                    document.getElementById("studentTable").style.display = "table";
-                }
+
+    <!-- JavaScript -->
+    <script>
+function searchStudent() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById("studentTableBody");
+    const tr = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < tr.length; i++) {
+        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
+        const nameCell = tr[i].getElementsByTagName("td")[1]; // Name
+
+        if (lrnCell && nameCell) {
+            const lrnText = lrnCell.textContent || lrnCell.innerText;
+            const nameText = nameCell.textContent || nameCell.innerText;
+
+            if (
+                lrnText.toUpperCase().includes(filter) ||
+                nameText.toUpperCase().includes(filter)
+            ) {
+                tr[i].style.display = "";
+            } else {
+                tr[i].style.display = "none";
             }
-        
-            // Trigger search on Enter key
-            document.getElementById("searchInput").addEventListener("keydown", function(event) {
-                if (event.key === "Enter") {
-                    event.preventDefault(); // Prevent form submission
-                    searchStudent();
-                }
-            });
-        
-            // Show students for a selected year level
-            function showStudents(yearLevel) {
-                document.querySelector(".year-levels").style.display = "none";
-                document.getElementById("studentTable").style.display = "table"; // Show the student table
-            }
-        
-            function showStudentList(section) {
-                document.getElementById("studentList").style.display = "block"; // Show student list for promotion
-                document.getElementById("sectionName").innerText = section; // Show the section name
-            }
-        </script>
-        
+        }
+    }
+}
+
+function handleKeyPress(event) {
+    if (event.key === "Enter") {
+        event.preventDefault();
+        searchStudent();
+    }
+}
+
+    function viewAttendance(lrn) {
+        window.location.href = 'students_attendance.html?lrn=' + lrn;
+    }
+
+    </script>
 
     <!-- Ionicons -->
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>

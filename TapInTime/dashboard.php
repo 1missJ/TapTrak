@@ -180,12 +180,6 @@ $recent_query = $conn->query("
         </div>
     </div>
 
-    <div style="background: #fff; padding: 20px; margin-bottom: 30px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,0.06);">
-    <h2 style="margin-bottom: 15px; color: #444;">📊 Attendance Rate This Week</h2>
-    <canvas id="attendanceChart" height="100"></canvas>
-</div>
-
-
     <div class="recent-activity">
         <h2>📌 Recent Activity</h2>
         <ul>
@@ -202,52 +196,5 @@ $recent_query = $conn->query("
 
 <!-- Optional JS -->
 <script src="assets/js/main.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-    const ctx = document.getElementById('attendanceChart').getContext('2d');
-    const attendanceChart = new Chart(ctx, {
-        type: 'line',
-        data: {
-            labels: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-            datasets: [{
-                label: 'Attendance Rate (%)',
-                data: [92, 88, 95, 90, 87, 93, 89],
-                fill: true,
-                backgroundColor: 'rgba(173, 216, 230, 0.2)',  // pastel blue
-                borderColor: 'rgba(100, 149, 237, 1)',         // cornflower blue
-                borderWidth: 2,
-                tension: 0.3,
-                pointBackgroundColor: '#6495ED'
-            }]
-        },
-        options: {
-            scales: {
-                y: {
-                    beginAtZero: true,
-                    max: 100,
-                    ticks: {
-                        stepSize: 10,
-                        callback: function(value) {
-                            return value + '%';
-                        }
-                    }
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                },
-                tooltip: {
-                    callbacks: {
-                        label: function(context) {
-                            return context.parsed.y + '% attendance';
-                        }
-                    }
-                }
-            }
-        }
-    });
-</script>
-
 </body>
 </html>

@@ -38,8 +38,7 @@ if (mysqli_num_rows($result) > 0) {
 
         <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search student...">
-            <button onclick="searchStudent()">Search</button>
+        <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="if(event.key === 'Enter') searchStudent();">
         </div>
 
         <!-- Year Level List -->
@@ -87,21 +86,42 @@ if (mysqli_num_rows($result) > 0) {
 
     <!-- JavaScript -->
     <script>
-        function searchStudent() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("studentTableBody");
-            tr = table.getElementsByTagName("tr");
+function searchStudent() {
+    var input = document.getElementById("searchInput");
+    var filter = input.value.toUpperCase();
+    var table = document.getElementById("studentTableBody");
+    var tr = table.getElementsByTagName("tr");
 
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
-                }
+    // Show the table if it's hidden
+    document.getElementById("studentTable").style.display = "table";
+    document.querySelector(".year-levels").style.display = "none";
+
+    let found = false;
+
+    for (let i = 0; i < tr.length; i++) {
+        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
+        const nameCell = tr[i].getElementsByTagName("td")[1]; // Full Name
+
+        if (lrnCell && nameCell) {
+            const lrnText = lrnCell.textContent || lrnCell.innerText;
+            const nameText = nameCell.textContent || nameCell.innerText;
+
+            if (
+                lrnText.toUpperCase().includes(filter) ||
+                nameText.toUpperCase().includes(filter)
+            ) {
+                tr[i].style.display = "";
+                found = true;
+            } else {
+                tr[i].style.display = "none";
             }
         }
+    }
+
+    if (!found) {
+        alert("No students found.");
+    }
+}
 
         // Show students for a selected year level
         function showStudents(yearLevel) {
