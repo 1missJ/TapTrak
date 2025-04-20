@@ -11,9 +11,9 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
             <li class="brand-logo">
                 <a href="#">
                     <div class="logo-container">
-                        <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                        <img src="assets/imgs/logo.png">
                     </div>
-                    <span class="title">TapInTime</span>
+                    <span class="title">TapTrack</span>
                 </a>
             </li>
 
@@ -63,6 +63,13 @@ $userRole = $_SESSION['user_role'] ?? ''; // Default to empty if not set
                         <span class="title">Subject Management</span>
                     </a>
                 </li>
+
+                <li style="display: none;">
+                            <a href="enrollment_admin.html">
+                                <span class="icon"><ion-icon name="newspaper-outline"></ion-icon></span>
+                                <span class="title">Enrollment</span>
+                            </a>
+                        </li>
 
                 <li>
                     <a href="attendance_monitoring.html">

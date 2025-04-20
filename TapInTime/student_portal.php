@@ -6,6 +6,7 @@ if (!isset($_SESSION['student_id'])) {
     header("Location: index.php");
     exit();
 }
+
 ?>
 <!DOCTYPE html>
 <html lang="en">

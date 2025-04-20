@@ -111,26 +111,10 @@ $subjects = [
         margin-top: 2px;
         margin-left:100px;
     }
-
-    .enroll-btn {
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        padding: 8px 18px;
-        font-size: 16px;
-        cursor: pointer;
-        border-radius: 4px;
-        margin-top: 30px;
-        margin-left:500px;
-    }
-
-    .enroll-btn:hover {
-        background-color: #45a049;
-    }
 </style>
 
 <div class="subjects-container">
-    <h2>Available Subjects to Enroll</h2>
+    <h2>Enrolled Subject</h2>
 
     <div class="subjects-list">
         <?php foreach ($subjects as $item): ?>
@@ -141,11 +125,6 @@ $subjects = [
             </div>
         <?php endforeach; ?>
     </div>
-
-    <!-- Enroll Button -->
-    <form method="POST">
-        <button type="submit" class="enroll-btn">Enroll</button>
-    </form>
 </div>
 
 <!-- Ionicons -->

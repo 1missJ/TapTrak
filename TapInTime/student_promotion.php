@@ -16,11 +16,20 @@
     <div class="main-content">
     <h2>Student Promotion</h2>
 
-        <!-- Search Bar -->
-        <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search by section...">
-            <button onclick="searchStudent()">Search</button>
-        </div>
+    <div class="search-container" id="searchContainer" style="display: none;">
+            <div class="left-search">
+                <input type="text" id="searchInput" placeholder="Search by section...">
+                <button onclick="searchStudent()">Search</button>
+            </div>
+        
+            <div class="right-filter">
+                <select id="studentTypeFilter" onchange="filterByStudentType()">
+                    <option value="">Student Type</option>
+                    <option value="Regular Student">Regular Student</option>
+                    <option value="STI">STI</option>
+                </select>
+            </div>
+        </div>        
 
         <!-- Year Level List -->
         <div class="year-levels">
@@ -44,14 +53,19 @@
 <?php
 include 'db_connection.php';
 
+$sql = "SELECT section, student_type, COUNT(*) as total_students 
+        FROM students 
+        WHERE grade_level = ? 
+        GROUP BY section, student_type";
+
 $grades = ['Grade 7', 'Grade 8', 'Grade 9', 'Grade 10'];
 $all_data = [];
 
 foreach ($grades as $grade_level) {
-    $sql = "SELECT section, COUNT(*) as total_students 
+    $sql = "SELECT section, student_type, COUNT(*) as total_students 
             FROM students 
             WHERE grade_level = ? 
-            GROUP BY section";
+            GROUP BY section, student_type";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("s", $grade_level);
     $stmt->execute();
@@ -59,21 +73,17 @@ foreach ($grades as $grade_level) {
 
     while ($row = $result->fetch_assoc()) {
         $section = htmlspecialchars($row['section']);
+        $studentType = htmlspecialchars($row['student_type']);
         $count = $row['total_students'];
-        $all_data[] = [
-            'grade' => $grade_level,
-            'section' => $section,
-            'count' => $count
-        ];
-
-        echo "<tr data-grade='{$grade_level}' style='display: none;'>
+    
+        echo "<tr data-grade='{$grade_level}' data-type='{$studentType}' style='display: none;'>
                 <td>{$section}</td>
                 <td>{$count}</td>
                 <td>
                     <button class='promote-btn' onclick=\"location.href='promote_students.php?section={$section}&grade_level={$grade_level}'\">Promote</button>
                 </td>
               </tr>";
-    }
+    }    
 
     $stmt->close();
 }
@@ -84,54 +94,66 @@ foreach ($grades as $grade_level) {
 
     <!-- JavaScript -->
     <script>
-    function searchStudent() {
-        var input = document.getElementById("searchInput");
-        var filter = input.value.toUpperCase();
-        var table = document.getElementById("studentTableBody");
-        var tr = table.getElementsByTagName("tr");
-        var foundMatch = false;
+function searchStudent() {
+    var input = document.getElementById("searchInput");
+    var filter = input.value.toUpperCase();
+    var rows = document.querySelectorAll("#studentTableBody tr");
 
-        for (var i = 0; i < tr.length; i++) {
-            var td = tr[i].getElementsByTagName("td")[0]; // section column
+    rows.forEach(row => {
+        // Only filter rows that are already visible (i.e., current grade level rows)
+        if (row.style.display !== "none") {
+            var td = row.getElementsByTagName("td")[0]; // Section column
             if (td) {
                 var txtValue = td.textContent || td.innerText;
-                if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                    tr[i].style.display = "";
-                    foundMatch = true;
-                } else {
-                    tr[i].style.display = "none";
-                }
+                row.style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
             }
         }
+    });
+}
 
-        // Show table if at least one match is found
-        if (foundMatch) {
-            document.querySelector(".year-levels").style.display = "none";
-            document.getElementById("studentTable").style.display = "table";
-        }
-    }
+// Trigger search on pressing Enter
+document.addEventListener("DOMContentLoaded", function () {
+    var searchInput = document.getElementById("searchInput");
 
-    // Trigger search on Enter key
-    document.getElementById("searchInput").addEventListener("keydown", function(event) {
+    searchInput.addEventListener("keydown", function (event) {
         if (event.key === "Enter") {
             event.preventDefault(); // Prevent form submission
             searchStudent();
         }
     });
+});
 
-        // Show students for a selected year level
-        function showStudents(yearLevel) {
+function showStudents(yearLevel) {
+    currentGrade = yearLevel;
     document.querySelector(".year-levels").style.display = "none";
+    document.getElementById("searchContainer").style.display = "flex";
     const table = document.getElementById("studentTable");
     const rows = document.querySelectorAll("#studentTableBody tr");
 
     table.style.display = "table";
 
     rows.forEach(row => {
-        if (row.getAttribute("data-grade") === yearLevel) {
-            row.style.display = "";
-        } else {
-            row.style.display = "none";
+        const grade = row.getAttribute("data-grade");
+        const type = row.getAttribute("data-type");
+        const selectedType = document.getElementById("studentTypeFilter").value;
+
+        const matchesType = selectedType === "" || type === selectedType;
+        row.style.display = grade === yearLevel && matchesType ? "" : "none";
+    });
+}
+
+function filterByStudentType() {
+    const selectedType = document.getElementById("studentTypeFilter").value;
+    const rows = document.querySelectorAll("#studentTableBody tr");
+
+    rows.forEach(row => {
+        const rowType = row.getAttribute("data-type");
+        const rowGrade = row.getAttribute("data-grade");
+
+        // Only filter if the row is part of the currently displayed grade
+        if (row.style.display !== "none" || selectedType !== "") {
+            const matchesType = selectedType === "" || rowType === selectedType;
+            row.style.display = matchesType && rowGrade === currentGrade ? "" : "none";
         }
     });
 }
@@ -140,6 +162,7 @@ foreach ($grades as $grade_level) {
             var checkboxes = document.querySelectorAll(".promote-checkbox:checked");
             alert(checkboxes.length + " students promoted.");
         }
+
     </script>
 
     <!-- Ionicons -->

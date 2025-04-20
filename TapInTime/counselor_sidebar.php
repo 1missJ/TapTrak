@@ -4,9 +4,9 @@
             <li class="brand-logo">
                 <a href="#">
                     <div class="logo-container">
-                        <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                        <img src="assets/imgs/logo.png" alt="TapInTime Logo">
                     </div>
-                    <span class="title">TapInTime</span>
+                    <span class="title">TapTrack</span>
                 </a>
             </li>                    
             

@@ -43,7 +43,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Update student profile in the database
     $sql = "UPDATE students SET first_name = ?, middle_name = ?, last_name = ?, date_of_birth = ?, gender = ?, citizenship = ?, contact_number = ?, address = ?, email = ?, guardian_name = ?, guardian_contact = ?, guardian_address = ?, guardian_relationship = ?, elementary_school = ?, year_graduated = ? WHERE lrn = ?";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("ssssssssssssssss", $first_name, $middle_name, $last_name, $date_of_birth, $gender, $citizenship, $contact_number, $address, $email, $guardian_name, $guardian_contact, $guardian_address, $guardian_relationship, $elementary_school, $year_graduated, $lrn);
+    $stmt->bind_param("ssssssssssss", $first_name, $middle_name, $last_name, $date_of_birth, $gender, $citizenship, $contact_number, $address, $email, $guardian_name, $guardian_contact, $guardian_address, $guardian_relationship, $elementary_school, $year_graduated, $lrn);
 
     // Execute and check for success
     if ($stmt->execute()) {

@@ -26,14 +26,11 @@ $result = $conn->query($sql);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Student Information</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="assets/css/student_portal_nav.css">
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f6f9;
-        }
+ 
 
         .container {
             margin-top: 50px;

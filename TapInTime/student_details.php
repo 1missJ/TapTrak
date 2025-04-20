@@ -2,21 +2,24 @@
 // Include database connection
 include('db_connection.php');
 
-// Fetch specific columns for students (without any grade-level restriction in the query)
-$query = "SELECT lrn, CONCAT(first_name, ' ', middle_name, ' ', last_name) AS fullname, email, section, grade_level 
-          FROM students";
+// Fetch the data including grade level and student type
+$query = "SELECT section, grade_level, student_type, COUNT(*) AS student_count 
+          FROM students 
+          GROUP BY section, grade_level, student_type";
 
 $result = mysqli_query($conn, $query);
 
 // Initialize the students array
 $students = [];
 
-// Check if any students were fetched
+// Check if any data was fetched
+// Check if any data was fetched
 if (mysqli_num_rows($result) > 0) {
     // Fetch the results into the array
     $students = mysqli_fetch_all($result, MYSQLI_ASSOC);
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,10 +39,16 @@ if (mysqli_num_rows($result) > 0) {
     <div class="main-content">
         <h2>Student Details</h2>
 
-        <!-- Search Bar -->
-        <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="if(event.key === 'Enter') searchStudent();">
-        </div>
+        <div class="search-container" style="display:none;">
+        <div class="left-search">
+    <form id="searchForm" onsubmit="return handleSearch(event)">
+        <input type="text" id="searchInput" placeholder="Search by section...">
+        <button type="submit">Search</button>
+    </form>
+</div>
+
+    <div class="right-filter" id="studentTypeFilterContainer" style="display: none;"></div>
+</div>    
 
         <!-- Year Level List -->
         <div class="year-levels">
@@ -53,95 +62,117 @@ if (mysqli_num_rows($result) > 0) {
         <table class="student-table" id="studentTable" style="display:none;">
             <thead>
                 <tr>
-                    <th>LRN</th>
-                    <th>Full Name</th>
-                    <th>Email</th>
                     <th>Section</th>
+                    <th>No. of Students</th>
+                    <th>Student Type</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
-                <?php
-                // Check if there are students fetched
-                foreach ($students as $student) {
-                    $grade = $student['grade_level']; // Ensure grade_level is included
-                    echo "<tr data-grade='$grade'>
-                        <td>{$student['lrn']}</td>
-                        <td>{$student['fullname']}</td>
-                        <td>{$student['email']}</td>
-                        <td>{$student['section']}</td>
-                        <td>
-                            <button class='edit-btn' onclick='redirectToStudentInfo(\"{$student['lrn']}\")'>Edit</button>
-                            <button class='archive-btn'>Archive</button>
-                            <button class='view-btn' onclick='redirectToStudentInfo(\"{$student['lrn']}\")'>
-                                <ion-icon name='eye-outline'></ion-icon>
-                            </button>
-                        </td>
-                    </tr>";
-                }                
-                ?>
+<?php
+if (!empty($students)) {
+    foreach ($students as $student) {
+        // Store grade level and student type for filtering
+        echo "<tr data-grade='{$student['grade_level']}' data-type='{$student['student_type']}'>
+            <td>{$student['section']}</td>
+            <td>{$student['student_count']}</td>
+            <td>{$student['student_type']}</td>
+            <td>
+                <button class='view-btn' onclick=\"location.href='details_student.php?section=" . urlencode($student['section']) . "'\">
+                    <ion-icon name='eye-outline'></ion-icon>
+                </button>
+            </td>
+        </tr>";
+    }
+}
+?>
             </tbody>
         </table>
     </div>
 
     <!-- JavaScript -->
     <script>
-function searchStudent() {
-    var input = document.getElementById("searchInput");
-    var filter = input.value.toUpperCase();
-    var table = document.getElementById("studentTableBody");
-    var tr = table.getElementsByTagName("tr");
+    function handleSearch(event) {
+        event.preventDefault(); // Prevent form from submitting normally
+        searchStudent();
+        return false;
+    }
 
-    // Show the table if it's hidden
-    document.getElementById("studentTable").style.display = "table";
-    document.querySelector(".year-levels").style.display = "none";
+    function searchStudent() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("studentTableBody");
+        var tr = table.getElementsByTagName("tr");
 
-    let found = false;
-
-    for (let i = 0; i < tr.length; i++) {
-        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
-        const nameCell = tr[i].getElementsByTagName("td")[1]; // Full Name
-
-        if (lrnCell && nameCell) {
-            const lrnText = lrnCell.textContent || lrnCell.innerText;
-            const nameText = nameCell.textContent || nameCell.innerText;
-
-            if (
-                lrnText.toUpperCase().includes(filter) ||
-                nameText.toUpperCase().includes(filter)
-            ) {
-                tr[i].style.display = "";
-                found = true;
-            } else {
-                tr[i].style.display = "none";
+        for (var i = 0; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[0]; // Index 0 = Section
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
             }
         }
     }
 
-    if (!found) {
-        alert("No students found.");
-    }
-}
-
-        // Show students for a selected year level
-        function showStudents(yearLevel) {
+    function showStudents(yearLevel) {
     document.querySelector(".year-levels").style.display = "none";
+    document.querySelector(".search-container").style.display = "flex";
+
     const table = document.getElementById("studentTable");
-    const rows = document.querySelectorAll("#studentTableBody tr");
+    const tbody = document.getElementById("studentTableBody");
+    const rows = tbody.querySelectorAll("tr");
     table.style.display = "table";
 
+    let hasMatch = false;
+
+    // Remove existing "no data" message if any
+    const noDataRow = document.getElementById("noDataRow");
+    if (noDataRow) noDataRow.remove();
+
+    // Filter rows by grade level
     rows.forEach(row => {
         const grade = row.getAttribute("data-grade").trim().toLowerCase();
         if (grade === yearLevel.toLowerCase()) {
             row.style.display = "";
+            hasMatch = true;
         } else {
             row.style.display = "none";
         }
     });
+
+    // If no matching rows, insert a "No data available" row
+    if (!hasMatch) {
+        const newRow = document.createElement("tr");
+        newRow.id = "noDataRow";
+        newRow.innerHTML = `<td>No data available.</td>`;
+        tbody.appendChild(newRow);
+    }
+
+    // Populate dropdown
+    const dropdownHTML = ` 
+        <select id="studentTypeFilter" onchange="filterByStudentType('${yearLevel}')">
+            <option value="">Student Type</option>
+            <option value="Regular Student">Regular Student</option>
+            <option value="STI">STI</option>
+        </select>
+    `;
+    const filterContainer = document.getElementById("studentTypeFilterContainer");
+    filterContainer.innerHTML = dropdownHTML;
+    filterContainer.style.display = "block";
 }
 
-        function redirectToStudentInfo(studentLrn) {
-            window.location.href = `student_profile.php?lrn=${studentLrn}`;
+        function filterByStudentType(selectedGrade) {
+            const selectedType = document.getElementById("studentTypeFilter").value.toLowerCase();
+            const rows = document.querySelectorAll("#studentTableBody tr");
+
+            rows.forEach(row => {
+                const rowType = (row.getAttribute("data-type") || "").toLowerCase();
+                const rowGrade = (row.getAttribute("data-grade") || "").toLowerCase();
+
+                const isGradeMatch = rowGrade === selectedGrade.toLowerCase();
+                const isTypeMatch = !selectedType || rowType === selectedType;
+
+                row.style.display = (isGradeMatch && isTypeMatch) ? "" : "none";
+            });
         }
     </script>
 

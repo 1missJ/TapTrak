@@ -37,21 +37,25 @@
         .info-line span {
             white-space: nowrap;
         }
+        select, input[type="date"], input[type="month"] {
+    padding: 8px 10px;
+    font-size: 15px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    width: 200px;
+    text-align: center;
+    font-weight: bold;
+}
 
-        select, input[type="date"] {
-            padding: 8px 10px;
-            font-size: 15px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-            width: 200px;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        h2 {
-            text-align: center;
-            margin-bottom: 15px;
-        }
+h2 {
+            font-size: 36px;
+    text-align: center;
+    margin: 0 auto;
+    width: fit-content;
+    position: relative;
+    left: 50%;
+    transform: translateX(-50%);
+}
 
         table {
             width: 100%;
@@ -112,14 +116,6 @@
             cursor: pointer;
             text-align: center;
         }
-
-        #subPeriodSelect {
-    -webkit-appearance: none;
-    -moz-appearance: none; 
-    appearance: none; 
-    background-image: none;
-}
-
     </style>
 </head>
 <body>
@@ -129,9 +125,9 @@
                 <li class="brand-logo">
                     <a href="#">
                         <div class="logo-container">
-                            <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                            <img src="assets/imgs/logo.png">
                         </div>
-                        <span class="title">TapInTime</span>
+                        <span class="title">TapTrack</span>
                     </a>
                 </li>                    
                 
@@ -174,6 +170,13 @@
                     <a href="subject_management.php">
                         <span class="icon"><ion-icon name="library-outline"></ion-icon></span>
                         <span class="title">Subject Management</span>
+                    </a>
+                </li>
+
+                <li style="display: none;">
+                    <a href="enrollment_admin.html">
+                        <span class="icon"><ion-icon name="newspaper-outline"></ion-icon></span>
+                        <span class="title">Enrollment</span>
                     </a>
                 </li>
     
@@ -221,19 +224,11 @@
                     <option value="math">Math</option>
                     <option value="english">English</option>
                 </select>
-
-                <div class="period-group">
-                    <label for="periodSelect">Period:</label>
-                    <select id="periodSelect">
-                        <option value="">Select</option>
-                        <option value="monthly">Monthly</option>
-                        <option value="quarterly">Quarterly</option>
-                    </select>
-                </div>
                 
                 <div class="sub-period-line" id="subPeriodContainer" style="display:none;">
-                    <select id="subPeriodSelect"></select>
-                </div>                
+                    <label for="subPeriodInput">Month & Year:</label>
+                    <input type="month" id="subPeriodInput">                    
+                </div>                                        
             </div>
 
             <table>
@@ -262,149 +257,93 @@
     <script>
         const attendanceData = {
             "123456789120": {
-                "english_monthly_january": [
+                "english_monthly_january_2025": [
+                    { date: "January 1, 2025", time: "08:10AM", remark: "Present" },
+                    { date: "January 2, 2025", time: "08:10AM", remark: "Present" }
+                ],
+                "math_monthly_january_2025": [
                     { date: "2025-04-10", time: "08:10AM", remark: "Present" },
                     { date: "2025-04-11", time: "08:10AM", remark: "Absent" },
                     { date: "2025-04-12", time: "08:10AM", remark: "Present" }
-                ],
-                "english_quarterly_1st_quarter": [
-                    { date: "2025-04-10", time: "08:10AM", remark: "Present" },
-                    { date: "2025-04-11", time: "08:10AM", remark: "Absent" },
-                    { date: "2025-04-12", time: "08:10AM", remark: "Present" },
-                    { date: "2025-04-13", time: "08:10AM", remark: "Absent" },
-                    { date: "2025-04-14", time: "08:10AM", remark: "Present" }
-                ],
-                "math_monthly_january": [
-                    { date: "2025-04-10", time: "08:10AM", remark: "Present" },
-                    { date: "2025-04-11", time: "08:10AM", remark: "Absent" },
-                    { date: "2025-04-12", time: "08:10AM", remark: "Present" }
-                ],
-                "math_quarterly_1st_quarter": [
-                    { date: "2025-04-10", time: "08:10AM", remark: "Present" },
-                    { date: "2025-04-11", time: "08:10AM", remark: "Absent" },
-                    { date: "2025-04-12", time: "08:10AM", remark: "Present" },
-                    { date: "2025-04-13", time: "08:10AM", remark: "Absent" },
-                    { date: "2025-04-14", time: "08:10AM", remark: "Present" }
                 ]
             }
         };
-
+        
         const lrn = "123456789120";
-        const periodSelect = document.getElementById("periodSelect");
-        const subPeriodSelect = document.getElementById("subPeriodSelect");
-        const subPeriodContainer = document.getElementById("subPeriodContainer");
+        const subPeriodInput = document.getElementById("subPeriodInput");
         const subjectSelect = document.getElementById("subjectSelect");
-
-        const monthlyOptions = ["Select", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const quarterlyOptions = ["Select", "1st Quarter", "2nd Quarter", "3rd Quarter", "4th Quarter"];
-
-        function populateSubPeriodOptions(period) {
-            subPeriodSelect.innerHTML = "";
-            const options = period === "monthly" ? monthlyOptions : quarterlyOptions;
-            options.forEach(opt => {
-                const option = document.createElement("option");
-                option.value = opt.toLowerCase().replace(/\s/g, "_");
-                option.textContent = opt;
-                subPeriodSelect.appendChild(option);
-            });
-            subPeriodContainer.style.display = "flex";
-        }
-
+        const exportSelect = document.getElementById("exportSelect");
+        
         function updateAttendanceTable(key) {
-    const tableBody = document.getElementById("attendanceTableBody");
-    const exportSelect = document.getElementById("exportSelect");
-
-    tableBody.innerHTML = "";
-
-    const data = attendanceData[lrn]?.[key];
-
-    if (data && data.length > 0) {
-        // Add rows to the table
-        data.forEach(record => {
-            const row = `<tr>
-                <td>${record.date}</td>
-                <td>${record.time}</td>
-                <td class="${record.remark.toLowerCase()}">${record.remark}</td>
-            </tr>`;
-            tableBody.innerHTML += row;
-        });
-
-        // Show the export dropdown if data is available
-        exportSelect.style.display = 'block';
-    } else {
-        tableBody.innerHTML = '<tr><td colspan="3" class="no-data">No records found for this selection.</td></tr>';
-
-        // Hide the export dropdown if no data is available
-        exportSelect.style.display = 'none';
-    }
-}
-
-function tryUpdateTable() {
-    const subject = subjectSelect.value;
-    const period = periodSelect.value;
-    const subPeriod = subPeriodSelect.value;
-
-    if (!subject || !period || !subPeriod) {
-        // Clear the table and hide the export button when selections are incomplete
-        document.getElementById("attendanceTableBody").innerHTML = '<tr><td colspan="3" class="no-data">Please select a subject, period, and sub-period to view attendance.</td></tr>';
-        document.getElementById("exportSelect").style.display = 'none';
-        return;
-    }
-
-    const key = `${subject}_${period}_${subPeriod}`;
-    updateAttendanceTable(key);
-}
-
-
-periodSelect.addEventListener("change", () => {
-    const selected = periodSelect.value;
-    subPeriodSelect.innerHTML = '<option value="">Select Sub-period</option>';
-    subPeriodSelect.value = ""; // Reset sub-period value
-
-    if (selected === "monthly" || selected === "quarterly") {
-        populateSubPeriodOptions(selected);
-        subPeriodContainer.style.display = "flex";
-    } else {
-        subPeriodContainer.style.display = "none";
-    }
-
-    // Optional: reset table since selections are not complete yet
-    document.getElementById("attendanceTableBody").innerHTML = '<tr><td colspan="3" class="no-data">Please select a subject, period, and sub-period to view attendance.</td></tr>';
-});
-
-        subPeriodSelect.addEventListener("change", tryUpdateTable);
-        subjectSelect.addEventListener("change", tryUpdateTable);
-
+            const tableBody = document.getElementById("attendanceTableBody");
+            tableBody.innerHTML = "";
+        
+            const data = attendanceData[lrn]?.[key];
+        
+            if (data && data.length > 0) {
+                data.forEach(record => {
+                    const row = `<tr>
+                        <td>${record.date}</td>
+                        <td>${record.time}</td>
+                        <td class="${record.remark.toLowerCase()}">${record.remark}</td>
+                    </tr>`;
+                    tableBody.innerHTML += row;
+                });
+                exportSelect.style.display = 'block';
+            } else {
+                tableBody.innerHTML = '<tr><td colspan="3" class="no-data">No records found for this selection.</td></tr>';
+                exportSelect.style.display = 'none';
+            }
+        }
+        
+        function tryUpdateTable() {
+            const subject = subjectSelect.value;
+            const monthYearValue = subPeriodInput.value;
+        
+            if (!subject || !monthYearValue || subject === "select") {
+                document.getElementById("attendanceTableBody").innerHTML = '<tr><td colspan="3" class="no-data">Please select a subject and month to view attendance.</td></tr>';
+                exportSelect.style.display = 'none';
+                return;
+            }
+        
+            const [year, monthNum] = monthYearValue.split("-");
+            const monthNames = ["january", "february", "march", "april", "may", "june",
+                                "july", "august", "september", "october", "november", "december"];
+            const month = monthNames[parseInt(monthNum, 10) - 1];
+        
+            const key = `${subject}_monthly_${month}_${year}`;
+            updateAttendanceTable(key);
+        }
+        
         function capitalize(str) {
             return str.charAt(0).toUpperCase() + str.slice(1);
         }
-
+        
         function exportToWord() {
             const subject = subjectSelect.value;
-            const period = periodSelect.value;
-            const subPeriod = subPeriodSelect.value;
-
-            const subjectText = capitalize(subject);
-            const periodText = capitalize(period);
-            const subPeriodText = capitalize(subPeriod.replace(/_/g, " "));
-
-            const lrnText = document.getElementById("modalFirstName").textContent;
-            const nameText = document.getElementById("modalMiddleName").textContent;
-
-            const fileName = `${subjectText}_${periodText}_${subPeriodText}_Attendance.doc`;
+            const monthYearValue = subPeriodInput.value;
+        
+            if (!subject || !monthYearValue) return;
+        
+            const [year, monthNum] = monthYearValue.split("-");
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+            const subPeriodText = `${monthNames[parseInt(monthNum, 10) - 1]} ${year}`;
+        
+            const fileName = `${capitalize(subject)}_Monthly_${subPeriodText}_Attendance.doc`;
             const attendanceTable = document.querySelector("table").outerHTML;
-
+        
             const infoTable = `
                 <table>
                     <tr>
-                        <td><strong>${lrnText}</strong><br><strong>${nameText}</strong></td>
-                        <td><strong>Subject:</strong> ${subjectText}<br><strong>Period:</strong> ${periodText} - ${subPeriodText}</td>
+                        <td><strong>${document.getElementById("modalFirstName").textContent}</strong><br><strong>${document.getElementById("modalMiddleName").textContent}</strong></td>
+                        <td><strong>Subject:</strong> ${capitalize(subject)}<br><strong>Period:</strong> Monthly - ${subPeriodText}</td>
                     </tr>
                 </table>`;
-
+        
             const fullHTML = `<html><head><meta charset='utf-8'></head><body>${infoTable}${attendanceTable}</body></html>`;
             const blob = new Blob([fullHTML], { type: 'application/msword' });
-
+        
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
             a.download = fileName;
@@ -412,33 +351,32 @@ periodSelect.addEventListener("change", () => {
             a.click();
             document.body.removeChild(a);
         }
-
+        
         function exportToExcel() {
             const subject = subjectSelect.value;
-            const period = periodSelect.value;
-            const subPeriod = subPeriodSelect.value;
-
-            const subjectText = capitalize(subject);
-            const periodText = capitalize(period);
-            const subPeriodText = capitalize(subPeriod.replace(/_/g, " "));
-
-            const lrnText = document.getElementById("modalFirstName").textContent;
-            const nameText = document.getElementById("modalMiddleName").textContent;
-
-            const fileName = `${subjectText}_${periodText}_${subPeriodText}_Attendance.xls`;
+            const monthYearValue = subPeriodInput.value;
+        
+            if (!subject || !monthYearValue) return;
+        
+            const [year, monthNum] = monthYearValue.split("-");
+            const monthNames = ["January", "February", "March", "April", "May", "June",
+                                "July", "August", "September", "October", "November", "December"];
+            const subPeriodText = `${monthNames[parseInt(monthNum, 10) - 1]} ${year}`;
+        
+            const fileName = `${capitalize(subject)}_Monthly_${subPeriodText}_Attendance.xls`;
             const attendanceTable = document.querySelector("table").outerHTML;
-
+        
             const infoTable = `
                 <table>
                     <tr>
-                        <td><strong>${lrnText}</strong><br><strong>${nameText}</strong></td>
-                        <td><strong>Subject:</strong> ${subjectText}<br><strong>Period:</strong> ${periodText} - ${subPeriodText}</td>
+                        <td><strong>${document.getElementById("modalFirstName").textContent}</strong><br><strong>${document.getElementById("modalMiddleName").textContent}</strong></td>
+                        <td><strong>Subject:</strong> ${capitalize(subject)}<br><strong>Period:</strong> Monthly - ${subPeriodText}</td>
                     </tr>
                 </table>`;
-
+        
             const fullHTML = `<html xmlns:x="urn:schemas-microsoft-com:office:excel"><head><meta charset="UTF-8"></head><body>${infoTable}${attendanceTable}</body></html>`;
             const blob = new Blob([fullHTML], { type: 'application/vnd.ms-excel' });
-
+        
             const a = document.createElement("a");
             a.href = URL.createObjectURL(blob);
             a.download = fileName;
@@ -446,19 +384,30 @@ periodSelect.addEventListener("change", () => {
             a.click();
             document.body.removeChild(a);
         }
+        
+        document.addEventListener("DOMContentLoaded", function () {
+    exportSelect.style.display = 'none';
+    
+    // Show the month/year input only when a valid subject is chosen
+    subjectSelect.addEventListener("change", function () {
+        if (subjectSelect.value !== "select") {
+            document.getElementById("subPeriodContainer").style.display = "block";
+        } else {
+            document.getElementById("subPeriodContainer").style.display = "none";
+        }
+        tryUpdateTable();
+    });
 
-        document.getElementById("exportSelect").addEventListener("change", function () {
-            const selected = this.value;
-            if (selected === "word") exportToWord();
-            else if (selected === "excel") exportToExcel();
-        });
+    subPeriodInput.addEventListener("change", tryUpdateTable);
 
-        // Initial setup: hide export dropdown until data is shown
-document.addEventListener("DOMContentLoaded", function () {
-    document.getElementById("exportSelect").style.display = 'none';
+    exportSelect.addEventListener("change", function () {
+        if (this.value === "word") exportToWord();
+        else if (this.value === "excel") exportToExcel();
+        this.value = "export"; // Reset dropdown
+    });
 });
 
-    </script>
+        </script>        
 
     <script type="module" src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"></script>
     <script nomodule src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"></script>

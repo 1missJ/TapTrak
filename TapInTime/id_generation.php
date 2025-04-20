@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Student Verification - TapInTime</title>
+    <title>ID Generation</title>
     <link rel="stylesheet" href="assets/css/style.css">
     <link rel="stylesheet" href="assets/css/ids.css">
     <link rel="stylesheet" href="assets/css/rfid.css">
@@ -19,9 +19,9 @@
         <h2>ID Generation</h2>
 
         <!-- Search Bar -->
-        <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="handleKeyPress(event)">
-<button onclick="searchStudent()">Search</button>
+        <div class="search-containers">
+            <input type="text" id="searchInput" placeholder="Search by LRN and Name...">
+            <button onclick="searchStudent()">Search</button>
         </div>
 
         <?php
@@ -67,32 +67,38 @@ if ($role === 'counselor' && !in_array($current_page, $allowed_pages_for_counsel
                 </tr>
             </thead>
             <tbody id="studentTableBody">
-                <?php while ($row = mysqli_fetch_assoc($result)): ?>
-                    <?php 
-                        // Combine first_name, middle_name, and last_name into "Name"
-                        $full_name = $row['first_name'] . ' ' . 
-                                    (!empty($row['middle_name']) ? $row['middle_name'] . ' ' : '') . 
-                                    $row['last_name']; 
-                    ?>
-                    <tr>
-                        <td><?php echo $row['lrn']; ?></td>
-                        <td><?php echo $full_name; ?></td>
-                        <td><?php echo $row['email']; ?></td>
-                        <td>
-                        <span class="rfid-value" data-lrn="<?php echo $row['lrn']; ?>">
-                        <?php echo $row['rfid'] ?? 'Not Assigned'; ?>
-                        </span>
-                         <button class="edit-rfid-btn" data-lrn="<?php echo $row['lrn']; ?>">
-                          ✏️
-                         </button>
-                        </td>
-                        <td><?php echo $row['created_at']; ?></td>
+            <?php if (mysqli_num_rows($result) > 0): ?>
+    <?php while ($row = mysqli_fetch_assoc($result)): ?>
+        <?php 
+            // Combine first_name, middle_name, and last_name into "Name"
+            $full_name = $row['first_name'] . ' ' . 
+                        (!empty($row['middle_name']) ? $row['middle_name'] . ' ' : '') . 
+                        $row['last_name']; 
+        ?>
+        <tr>
+            <td><?php echo $row['lrn']; ?></td>
+            <td><?php echo $full_name; ?></td>
+            <td><?php echo $row['email']; ?></td>
+            <td>
+                <span class="rfid-value" data-lrn="<?php echo $row['lrn']; ?>">
+                    <?php echo $row['rfid'] ?? 'Not Assigned'; ?>
+                </span>
+                <button class="edit-rfid-btn" data-lrn="<?php echo $row['lrn']; ?>">
+                    ✏️
+                </button>
+            </td>
+            <td><?php echo $row['created_at']; ?></td>
+            <td>
+                <button class="generate-btn" data-lrn="<?php echo $row['lrn']; ?>">Generate</button>
+            </td>
+        </tr>
+    <?php endwhile; ?>
+<?php else: ?>
+    <tr>
+        <td>No data available.</td>
+    </tr>
+<?php endif; ?>
 
-                        <td>
-                            <button class="generate-btn" data-lrn="<?php echo $row['lrn']; ?>">Generate</button>
-                        </td>
-                    </tr>
-                <?php endwhile; ?>
             </tbody>
         </table>
     </div>
@@ -126,40 +132,6 @@ if ($role === 'counselor' && !in_array($current_page, $allowed_pages_for_counsel
 
 
     <script>
-
-function searchStudent() {
-    const input = document.getElementById("searchInput");
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById("studentTableBody");
-    const tr = table.getElementsByTagName("tr");
-
-    for (let i = 0; i < tr.length; i++) {
-        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
-        const nameCell = tr[i].getElementsByTagName("td")[1]; // Name
-
-        if (lrnCell && nameCell) {
-            const lrnText = lrnCell.textContent || lrnCell.innerText;
-            const nameText = nameCell.textContent || nameCell.innerText;
-
-            if (
-                lrnText.toUpperCase().includes(filter) ||
-                nameText.toUpperCase().includes(filter)
-            ) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
-            }
-        }
-    }
-}
-
-function handleKeyPress(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        searchStudent();
-    }
-}
-
 document.addEventListener("DOMContentLoaded", function () {
     const generateButtons = document.querySelectorAll(".generate-btn");
     const modal = document.getElementById("idModal");
@@ -191,7 +163,37 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-const assignButtons = document.querySelectorAll(".assign-rfid-btn");
+function searchStudent() {
+    const input = document.getElementById("searchInput");
+    const filter = input.value.toUpperCase();
+    const table = document.getElementById("studentTableBody");
+    const rows = table.getElementsByTagName("tr");
+
+    for (let i = 0; i < rows.length; i++) {
+        const lrnCell = rows[i].getElementsByTagName("td")[0]; // LRN
+        const nameCell = rows[i].getElementsByTagName("td")[1]; // Name
+
+        if (lrnCell && nameCell) {
+            const lrn = lrnCell.textContent || lrnCell.innerText;
+            const name = nameCell.textContent || nameCell.innerText;
+
+            if (lrn.toUpperCase().indexOf(filter) > -1 || name.toUpperCase().indexOf(filter) > -1) {
+                rows[i].style.display = "";
+            } else {
+                rows[i].style.display = "none";
+            }
+        }
+    }
+}
+
+// Trigger search on Enter key
+document.getElementById("searchInput").addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+        event.preventDefault(); // Prevent form submission if inside a form
+        searchStudent();
+    }
+});
+        const assignButtons = document.querySelectorAll(".assign-rfid-btn");
 
 assignButtons.forEach(button => {
     button.addEventListener("click", function () {

@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attendacen Monitoring</title>
+    <title>Enrollment</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 
@@ -37,7 +37,7 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Attendance Record</h2>
+        <h2>Enrollment</h2>
 
         <div class="search-container" id="searchContainer" style="display: none;">
             <div class="left-search">
@@ -62,37 +62,30 @@
             <div class="year-box" onclick="showStudents('Grade 10')">Grade 10</div>
         </div>
 
-
         <!-- Student Table -->
         <table class="student-table" id="studentTable" style="display:none;">
             <thead>
                 <tr>
                     <th>Section</th>
+                    <th>Student Type</th>
                     <th>No. of Students</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
-                <!-- Mabini - Regular Student -->
                 <tr data-grade="Grade 7" data-type="Regular Student">
                     <td>Mabini</td>
+                    <td>Regular Student</td>
                     <td>44</td>
-                    <td>
-                        <button class="views-btn" onclick="location.href='attendance_page.html'"><ion-icon name='eye-outline'></ion-icon></button>
-                        <button class="student-btn" onclick="location.href='attendance_students.html'"><ion-icon name="person-outline"></ion-icon></button>
-                        <button class="report-btn" onclick="location.href='attendance_report.html'"><ion-icon name="document-outline"></ion-icon></button>
-                    </td>
+                    <td><button class="view-btn" onclick="location.href='enrolled_student.html?student_type=Regular%20Student'">
+                        <ion-icon name='eye-outline'></ion-icon>
+                    </button>                    
                 </tr>
-            
-                <!-- Mangga - STI -->
                 <tr data-grade="Grade 7" data-type="STI">
                     <td>Mangga</td>
+                    <td>STI</td>
                     <td>36</td>
-                    <td>
-                        <button class="views-btn" onclick="location.href='attendance_page.html'"><ion-icon name='eye-outline'></ion-icon></button>
-                        <button class="student-btn" onclick="location.href='attendance_students.html'"><ion-icon name="person-outline"></ion-icon></button>
-                        <button class="report-btn" onclick="location.href='attendance_report.html'"><ion-icon name="document-outline"></ion-icon></button>
-                    </td>
+                    <td><button class="view-btn" onclick="location.href='enrolled_student.html?student_type=STI'"><ion-icon name='eye-outline'></ion-icon></button></td>
                 </tr>
             </tbody>            
         </table>

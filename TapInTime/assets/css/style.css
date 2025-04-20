@@ -176,21 +176,25 @@ body {
 }
 
 /* Page Title */
-.main-content h2 {
-    font-size: 24px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
+.main-content h2{
+        text-align: left;
+        margin-left: 20px;
+        font-family: 'Arial', sans-serif;
+        font-weight: 600;
+        color: #333;
+        font-size: 30px;
+    }
 
 /* Search Bar */
-.search-container {
+.search-containers {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start; /* Align items to the start (left) */
     align-items: center;
+    gap: 5px; /* Add some spacing between input and button */
     margin-bottom: 15px;
 }
 
-.search-container input {
+.search-containers input {
     width: 250px;
     padding: 8px;
     border: 1px solid #ccc;
@@ -198,8 +202,39 @@ body {
     font-size: 14px;
 }
 
+.search-containers button {
+    padding: 7px 14px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.search-containers button:hover {
+    background-color: #0056b3;
+}
+
+.search-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    gap: 5px;
+}
+
+.search-container input {
+    width: 200px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 14px;
+}
+
 .search-container button {
-    padding: 8px 15px;
+    padding: 7px 14px;
     background-color: #007bff;
     color: white;
     border: none;
@@ -210,6 +245,20 @@ body {
 
 .search-container button:hover {
     background-color: #0056b3;
+}
+
+.left-search {
+    display: flex;
+    gap: 10px;
+}
+
+.right-filter select {
+    padding: 8px 12px;
+    border-radius: 5px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    font-weight: bold;
+    min-width: 160px;
 }
 
 /* Table Styling */
@@ -312,6 +361,54 @@ body {
 
 .view-btn ion-icon {
     font-size: 16px;
+}
+
+.report-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #dc3545;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.report-btn:hover {
+    background-color: #c82333;
+}
+
+.student-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #ffc107;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.student-btn:hover {
+    background-color: #e0a800;
+}
+
+.views-btn {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    background-color: #3535dc;
+    color: white;
+    font-weight: bold;
+    transition: 0.3s;
+}
+
+.views-btn:hover {
+    color: #0056b3;
 }
 
 /*Student details modal in verification */
@@ -525,55 +622,6 @@ transform: scale(1.05);
 .view-btn:hover {
     color: #0056b3;
 }
-
-.report-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    background-color: #dc3545;
-    color: white;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.report-btn:hover {
-    background-color: #c82333;
-}
-
-.student-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    background-color: #ffc107;
-    color: white;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.student-btn:hover {
-    background-color: #e0a800;
-}
-
-.views-btn {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    background-color: #3535dc;
-    color: white;
-    font-weight: bold;
-    transition: 0.3s;
-}
-
-.views-btn:hover {
-    color: #0056b3;
-}
-
 
 /* ID Generation Button */
 .generate-btn {

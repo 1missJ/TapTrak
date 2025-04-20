@@ -10,12 +10,6 @@ body {
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
 }
 
-.student-nav {
-    display: flex;
-    justify-content: center;
-    gap: 30px;
-    flex-wrap: wrap;
-}
 
 .student-nav a {
 text-decoration: none;
@@ -46,6 +40,14 @@ font-size: 18px;
     margin-top: 0;
     color: #1565c0;
 }
+
+.logo-container img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
 
 /* Responsive */
 @media (max-width: 600px) {

@@ -27,11 +27,10 @@ $result = $conn->query($sql);
     <h2>Student Verification</h2>
 
     <!-- Search Bar -->
-    <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="handleKeyPress(event)">
-        <button onclick="searchStudent()">Search</button>
-
-    </div>
+    <div class="search-containers">
+    <input type="text" id="searchInput" placeholder="Search by LRN and Name...">
+    <button onclick="searchStudent()">Search</button>
+</div>
 
     <table class="student-table">
         <thead>
@@ -43,33 +42,31 @@ $result = $conn->query($sql);
                 <th>Actions</th>
             </tr>
         </thead>
-        
-    <tbody id="studentTableBody">
-                <?php
-                if ($result->num_rows > 0) {
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>" . $row['lrn'] . "</td>";
-                        echo "<td>" . $row['first_name'] . " " . $row['last_name'] . "</td>";
-                        echo "<td>" . $row['email'] . "</td>";
-                        echo "<td>" . $row['created_at'] . "</td>";
-                        echo "<td>
-                        <div class='action-buttons'>
-                            <button class='approve-btn' onclick='approveStudent(" . $row['id'] . ")'>Approve</button>
-                            <button class='reject-btn' onclick='rejectStudent(" . $row['id'] . ")'>Reject</button>
-                            <button class='view-btn' onclick='viewStudent(" . json_encode($row) . ")'>
-                                <ion-icon name='eye-outline'></ion-icon>
-                            </button>
-                        </div>
-                      </td>";
-                              
-                        echo "</tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No pending students found.</td></tr>";
-                }
-                ?>
-            </tbody>
+        <tbody id="studentTableBody">
+    <?php
+    if ($result->num_rows > 0) {
+        while ($row = $result->fetch_assoc()) {
+            echo "<tr>";
+            echo "<td>" . $row['lrn'] . "</td>";
+            echo "<td>" . $row['first_name'] . " " . $row['last_name'] . "</td>";
+            echo "<td>" . $row['email'] . "</td>";
+            echo "<td>" . $row['created_at'] . "</td>";
+            echo "<td>
+                <div class='action-buttons'>
+                    <button class='approve-btn' onclick='approveStudent(" . $row['id'] . ")'>Approve</button>
+                    <button class='reject-btn' onclick='rejectStudent(" . $row['id'] . ")'>Reject</button>
+                    <button class='view-btn' onclick='viewStudent(" . json_encode($row) . ")'>
+                        <ion-icon name='eye-outline'></ion-icon>
+                    </button>
+                </div>
+            </td>";
+            echo "</tr>";
+        }
+    } else {
+        echo "<tr><td colspan='5'>No pending students.</td></tr>";
+    }
+    ?>
+</tbody>
         </table>
 </div>
 
@@ -215,35 +212,26 @@ $result = $conn->query($sql);
 <!-- JavaScript for Search Functionality -->
 <script>
 function searchStudent() {
-    const input = document.getElementById("searchInput");
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById("studentTableBody");
-    const tr = table.getElementsByTagName("tr");
+    var input, filter, table, tr, i, tdLrn, tdName, lrnValue, nameValue;
+    input = document.getElementById("searchInput");
+    filter = input.value.toUpperCase();
+    table = document.getElementById("studentTableBody");
+    tr = table.getElementsByTagName("tr");
 
-    for (let i = 0; i < tr.length; i++) {
-        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
-        const nameCell = tr[i].getElementsByTagName("td")[1]; // Name
+    for (i = 0; i < tr.length; i++) {
+        tdLrn = tr[i].getElementsByTagName("td")[0];
+        tdName = tr[i].getElementsByTagName("td")[1];
 
-        if (lrnCell && nameCell) {
-            const lrnText = lrnCell.textContent || lrnCell.innerText;
-            const nameText = nameCell.textContent || nameCell.innerText;
+        if (tdLrn && tdName) {
+            lrnValue = tdLrn.textContent || tdLrn.innerText;
+            nameValue = tdName.textContent || tdName.innerText;
 
-            if (
-                lrnText.toUpperCase().includes(filter) ||
-                nameText.toUpperCase().includes(filter)
-            ) {
+            if (lrnValue.toUpperCase().indexOf(filter) > -1 || nameValue.toUpperCase().indexOf(filter) > -1) {
                 tr[i].style.display = "";
             } else {
                 tr[i].style.display = "none";
             }
         }
-    }
-}
-
-function handleKeyPress(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        searchStudent();
     }
 }
 
@@ -313,8 +301,16 @@ function handleKeyPress(event) {
     }
 
     document.addEventListener("DOMContentLoaded", function () {
-    // Ensure modal is hidden when the page loads
+    // Hide modal initially
     document.getElementById("studentModal").style.display = "none";
+
+    // Enable pressing Enter key to trigger search
+    document.getElementById("searchInput").addEventListener("keydown", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            searchStudent();
+        }
+    });
 });
 
 </script>

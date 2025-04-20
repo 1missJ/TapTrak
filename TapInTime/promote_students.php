@@ -55,9 +55,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['selected_students'], 
         <h2>Promote Students</h2>
 
         <!-- Search Bar -->
-        <div class="search-container">
-        <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeypress="handleKeyPress(event)">
-<button onclick="searchStudent()">Search</button>
+        <div class="search-containers">
+            <input type="text" id="searchInput" placeholder="Search student...">
+            <button onclick="searchStudent()">Search</button>
         </div>
 
         <!-- Student Table -->
@@ -118,38 +118,20 @@ $stmt->close();
 
 
 <script>
-function searchStudent() {
-    const input = document.getElementById("searchInput");
-    const filter = input.value.toUpperCase();
-    const table = document.getElementById("studentTableBody");
-    const tr = table.getElementsByTagName("tr");
+    function searchStudent() {
+        var input = document.getElementById("searchInput");
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("studentTableBody");
+        var tr = table.getElementsByTagName("tr");
 
-    for (let i = 0; i < tr.length; i++) {
-        const lrnCell = tr[i].getElementsByTagName("td")[0]; // LRN
-        const nameCell = tr[i].getElementsByTagName("td")[1]; // Name
-
-        if (lrnCell && nameCell) {
-            const lrnText = lrnCell.textContent || lrnCell.innerText;
-            const nameText = nameCell.textContent || nameCell.innerText;
-
-            if (
-                lrnText.toUpperCase().includes(filter) ||
-                nameText.toUpperCase().includes(filter)
-            ) {
-                tr[i].style.display = "";
-            } else {
-                tr[i].style.display = "none";
+        for (var i = 0; i < tr.length; i++) {
+            var td = tr[i].getElementsByTagName("td")[1];
+            if (td) {
+                var txtValue = td.textContent || td.innerText;
+                tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
             }
         }
     }
-}
-
-function handleKeyPress(event) {
-    if (event.key === "Enter") {
-        event.preventDefault();
-        searchStudent();
-    }
-}
 
     function promoteStudents() {
     const checkboxes = document.querySelectorAll(".promote-checkbox:checked");

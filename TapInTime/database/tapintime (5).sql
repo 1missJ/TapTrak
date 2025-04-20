@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 18, 2025 at 11:18 AM
+-- Generation Time: Apr 19, 2025 at 03:04 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -134,6 +134,18 @@ CREATE TABLE `pending_students` (
   `good_moral` varchar(255) DEFAULT NULL,
   `student_signature` varchar(255) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `school_years`
+--
+
+CREATE TABLE `school_years` (
+  `id` int(11) NOT NULL,
+  `year` varchar(20) DEFAULT NULL,
+  `is_current` tinyint(1) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -281,6 +293,12 @@ ALTER TABLE `pending_students`
   ADD UNIQUE KEY `email` (`email`);
 
 --
+-- Indexes for table `school_years`
+--
+ALTER TABLE `school_years`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indexes for table `students`
 --
 ALTER TABLE `students`
@@ -343,6 +361,12 @@ ALTER TABLE `faculty`
 --
 ALTER TABLE `pending_students`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=50;
+
+--
+-- AUTO_INCREMENT for table `school_years`
+--
+ALTER TABLE `school_years`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `students`

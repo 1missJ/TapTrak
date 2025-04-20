@@ -4,10 +4,9 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Promote Students</title>
+    <title>Enrolled Student Details</title>
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
-
 <body>
     <div class="container">
         <div class="navigation">
@@ -15,7 +14,7 @@
                 <li class="brand-logo">
                     <a href="#">
                         <div class="logo-container">
-                            <img src="assets/imgs/dahs.jpg" alt="TapInTime Logo">
+                            <img src="assets/imgs/logo.png">
                         </div>
                         <span class="title">TapTrack</span>
                     </a>
@@ -103,12 +102,13 @@
 
     <!-- Main Content -->
     <div class="main-content">
-        <h2>Promote Students</h2>
+        <h2>Enrolled Student List</h2>
 
-        <!-- Search Bar -->
         <div class="search-container">
-            <input type="text" id="searchInput" placeholder="Search student...">
-            <button onclick="searchStudent()">Search</button>
+            <div class="left-search">
+                <input type="text" id="searchInput" placeholder="Search by LRN or Name..." onkeydown="handleSearchEnter(event)">
+                <button onclick="searchStudent()">Search</button>
+            </div>
         </div>
 
         <!-- Student Table -->
@@ -118,82 +118,96 @@
                     <th>LRN</th>
                     <th>Name</th>
                     <th>Student Type</th>
-                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody id="studentTableBody">
-                <tr>
-                    <td>123456789</td>
-                    <td>John Doe</td>
-                    <td>Regular</td>
-                    <td><input type="checkbox" class="promote-checkbox"></td>
-                </tr>
-                <tr>
-                    <td>987654321</td>
-                    <td>Jane Smith</td>
-                    <td>Regular</td>
-                    <td><input type="checkbox" class="promote-checkbox"></td>
-                </tr>
-                <tr>
-                    <td>192837465</td>
-                    <td>Emily Johnson</td>
-                    <td>Regular</td>
-                    <td><input type="checkbox" class="promote-checkbox"></td>
-                </tr>
-                <tr>
-                    <td>564738291</td>
-                    <td>Michael Lee</td>
-                    <td>Regular</td>
-                    <td><input type="checkbox" class="promote-checkbox"></td>
-                </tr>
-                <tr>
-                    <td>374829561</td>
-                    <td>Sarah Davis</td>
-                    <td>Regular</td>
-                    <td><input type="checkbox" class="promote-checkbox"></td>
-                </tr>
+                <!-- Dynamic student rows will be added here -->
             </tbody>
         </table>
+    </div>
 
-<!-- Promote Button fixed to bottom right -->
-<div style="position: fixed; bottom: 20px; right: 30px; z-index: 1000;">
-    <button onclick="promoteStudents()" style="
-    background-color: #32cd32; 
-    color: white; 
-    border: none; 
-    padding: 10px 20px; 
-    border-radius: 5px; 
-    box-shadow: 0 2px 6px rgba(0,0,0,0.3); 
-    font-weight: bold; 
-    font-size: 16px; 
-    cursor: pointer;">
-        Submit
-    </button>
-</div>
-
-
-
-    <!-- Scripts -->
+    <!-- JavaScript -->
     <script>
-        function searchStudent() {
-            var input = document.getElementById("searchInput");
-            var filter = input.value.toUpperCase();
-            var table = document.getElementById("studentTableBody");
-            var tr = table.getElementsByTagName("tr");
+        const regular_students = [
+            { lrn: "123456789120", name: "Emily Johnson", student_type: "Regular Student" },
+            { lrn: "453467890986", name: "Jane Smith", student_type: "Regular Student" },
+            { lrn: "78467890986", name: "John Doe", student_type: "Regular Student" },
+            { lrn: "775894020011", name: "Michael Lee", student_type: "Regular Student" },
+            { lrn: "567829304568", name: "Sarah Davis", student_type: "Regular Student" }
+        ];
 
-            for (var i = 0; i < tr.length; i++) {
-                var td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    var txtValue = td.textContent || td.innerText;
-                    tr[i].style.display = txtValue.toUpperCase().indexOf(filter) > -1 ? "" : "none";
+        const sti_students = [
+            { lrn: "123456789123", name: "Emily Johnson", student_type: "STI" },
+            { lrn: "453467890987", name: "Jane Smith", student_type: "STI" },
+            { lrn: "78467890987", name: "John Doe", student_type: "STI" },
+            { lrn: "775894020012", name: "Michael Lee", student_type: "STI" },
+            { lrn: "567829304569", name: "Sarah Davis", student_type: "STI" }
+        ];
+
+        // Function to display students based on the selected student type
+        function displayStudents() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const studentTypeFilter = urlParams.get('student_type');  // Capture student_type from the URL
+            const tableBody = document.getElementById("studentTableBody");
+            tableBody.innerHTML = "";  // Clear the table
+
+            let studentsToDisplay = [];
+
+            // Display only regular students if student_type=Regular Student
+            if (studentTypeFilter === "Regular Student") {
+                studentsToDisplay = regular_students;  // Only regular students
+            }
+            // Display only STI students if student_type=STI
+            else if (studentTypeFilter === "STI") {
+                studentsToDisplay = sti_students;  // Only STI students
+            }
+
+            // Add students to the table
+            studentsToDisplay.forEach(student => {
+                const row = document.createElement("tr");
+
+                const lrnCell = document.createElement("td");
+                lrnCell.textContent = student.lrn;
+                row.appendChild(lrnCell);
+
+                const nameCell = document.createElement("td");
+                nameCell.textContent = student.name;
+                row.appendChild(nameCell);
+
+                const studentTypeCell = document.createElement("td");
+                studentTypeCell.textContent = student.student_type;
+                row.appendChild(studentTypeCell);
+
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Function to search by LRN or Name
+        function searchStudent() {
+            const query = document.getElementById("searchInput").value.toLowerCase();
+            const rows = document.querySelectorAll("#studentTableBody tr");
+
+            rows.forEach(row => {
+                const lrn = row.cells[0].textContent.toLowerCase();
+                const name = row.cells[1].textContent.toLowerCase();
+
+                if (lrn.includes(query) || name.includes(query)) {
+                    row.style.display = "";
+                } else {
+                    row.style.display = "none";
                 }
+            });
+        }
+
+        // Function to handle Enter key press for search
+        function handleSearchEnter(event) {
+            if (event.key === 'Enter') {
+                searchStudent();
             }
         }
 
-        function promoteStudents() {
-            var checkboxes = document.querySelectorAll(".promote-checkbox:checked");
-            alert(checkboxes.length + " student(s) promoted successfully.");
-        }
+        // Call displayStudents when the page loads
+        window.onload = displayStudents;
     </script>
 
     <!-- Ionicons -->
